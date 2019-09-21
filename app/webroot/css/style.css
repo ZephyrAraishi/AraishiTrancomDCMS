@@ -1,0 +1,639 @@
+@charset "utf-8";
+/************* 基本装飾 ****************/
+
+html {
+	overflow-y: scroll;
+}
+
+body {
+	line-height: 1.4;
+	color: #333;
+	font-family: "MS Pゴシック",sans-serif;
+	font-size: 14px; 
+	height: 100%;
+	text-align: center;
+	border: 0px solid gray;
+}
+
+
+/************* ヘッダー ****************/
+div#header {
+	margin: 0;
+    padding: 0;
+	z-index: 1;
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	width: 100%;
+	height: 50px;
+	min-width: 1000px;
+	background-color: #777777;
+	padding:5.0px 10.0px 5.0px 10.0px;
+}
+
+div#system {
+    padding: 0;
+    color: #FFFFFF;
+    font-style: relative;
+	font-size: 22pt;
+	font-weight: bolder;
+	margin-left: 10px;
+	float: left;
+	text-align: left;
+}
+
+div#system a {
+	color: white;
+	text-decoration: underline;
+}
+
+div#sub_system {
+    padding: 0;
+    color: #FFFFFF;
+    font-style: relative;
+    font-size: 22pt;
+    font-weight: bold;
+    margin-left: 50px;
+    float: left;
+}
+
+div#staff {
+	display: block;
+	position: absolute;
+	top: 5px;
+	right: 10px;
+    padding: 0;
+	color: #FFFFFF;
+    font-style: relative;
+	font-weight: bold;
+	margin-right: 20px;
+	float: right;
+	text-align: right;
+	width: 200px;
+	height: 50px;
+}
+
+/************* メニューバー ****************/
+div#menubar {
+	z-index: 1;
+	position: fixed;
+	left: 0px;
+	top: 50px;
+	width: 100%;
+	height: 40px;
+	background-color: #CCCCCC;
+	min-width: 1000px;
+}
+
+div#kino {
+    font-style: relative;
+    font-size: 18pt;
+    font-weight: bold;
+    float: left;
+    height: 40px;
+    width: 220px;
+    padding-top: 4px;
+    white-space: nowrap;
+}
+
+div#menus {
+	float: left;
+}
+
+div#logout {
+	display: block;
+	position: absolute;
+    float: right;
+    width: 140px;
+    right: 0px;
+}
+
+ul#nav {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-right: none;
+    height: 40px;
+}
+ul#nav li {
+    display: block;
+    position: relative;
+    float: left;
+    border: none;
+    height: 40px;
+    width: 140px;
+    text-align: center;
+    line-height: 40px;
+    margin: 0;
+    padding: 0;
+}
+ul#nav li.hover {
+    background: #eee;
+    border: none;
+}
+
+ul#nav li a {
+    display: block;
+    color: #252525;
+    text-decoration: none;
+    border: none;
+}
+
+ul#nav li ul {
+    border: none;
+    display: none;
+    background: #666;
+    overflow: hidden;
+    opacity: .9;
+    border: none;
+    width: 140px;
+    filter: alpha(opacity=80);
+    padding: 0;
+}
+
+ul#nav li ul li {
+	display: block;
+	position: relative;
+    border: none;
+    width: 140px;
+    text-align: left;
+    padding-left: 10px;
+}
+ul#nav li ul li.hover {
+    background: #777;
+    width: 100%;
+}
+
+ul#nav li ul li a {
+    color: #efefef;
+}
+
+/************* ヘッダー・メニュー裏空白部分 ****************/
+
+div#upperSpace{
+	position: relative;
+	line-height: 0px;
+	height: 90px;
+}
+
+/************* メッセージ共通 ****************/
+div#upperMsg{
+    display: block;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    width: 95%;
+    text-align: left;
+    padding: 10px;
+    
+}
+
+/************* エラーメッセージ ****************/
+div#errorMsg{
+    display: block;
+    position: relative;
+    color: red;
+    
+}
+
+/************* 通常メッセージメッセージ ****************/
+div#infoMsg{
+    display: block;
+    position: relative;
+    color: blue;
+
+}
+
+/************* ラッパー ****************/
+
+div#wrapper_l {
+    display: relative;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    max-width: 1600px;
+    width: 95%;
+}
+
+div#wrapper_s {
+    display: relative;
+    position: relative;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+    max-width: 1180px;
+    width: 95%;
+}
+
+/************* 描画部品 ****************/
+
+/* ライン */
+div.line {
+	border-top:0;
+	border-left:0;
+	border-right:0;
+	border-bottom:2px dashed #777777;
+	height: 0px;
+	margin-bottom: 20px;
+}
+
+/* 検索ボックス*/
+div.box {
+	border-top:1px solid #666666;
+	border-left:1px solid #666666;
+	border-right:1px solid #666666;
+	border-bottom:1px solid #666666;
+	border-collapse:collapse;
+	border-spacing:0;
+	background-color:#ffffff;
+	padding-top:20px;
+	padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 20px;
+	margin-bottom: 20px;
+	text-align: left;
+}
+
+/* テキストボックス */
+input[type="text"],
+input[type="file"],
+input[type="password"] {
+	border: 1px solid #7f9db9;
+	height: 20px;
+}
+
+input.han {
+	ime-mode: disabled;
+}
+
+input.zen {
+	ime-mode: active;
+}
+
+input[type="button"]{
+   font-size: 10pt;
+   width: 120px;
+   height: 30px;
+}
+
+input[type="submit"]{
+   font-size: 10pt;
+   width: 120px;
+   height: 30px;
+}
+select {
+   height:24px;
+}
+
+textarea {
+	font-size: 10pt;
+}
+
+/* 横幅可変領域 */
+div.resizable{
+	width:100%;
+	overflow-x: auto;
+	overflow-y: scroll;
+}
+
+div.resizable_s{
+    width:100%;
+    min-height:270px;
+    overflow-x: auto;
+    overflow-y: scroll;
+    height:270px;
+}
+
+/* 更新カーテン */
+div.updateCurtain {
+	display: block;
+	position: absolute;
+	width: 100%;
+	top: 0px;
+	left : 0px;
+	background: black;
+	filter:alpha(opacity=60);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	z-index: 1000;
+}
+
+/* ポップアップ前カーテン */
+div.displayCover {
+	display: block;
+	position: absolute;
+	width: 100%;
+	top: 0px;
+	left : 0px;
+	background: black;
+	z-index: 1000;
+	filter:alpha(opacity=40);
+	-moz-opacity: 0.4;
+	opacity: 0.4;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+/* スタッフサーチ用カーテン */
+div.displayCoverStaffSearch {
+	display: block;
+	position: absolute;
+	width: 100%;
+	top: 0px;
+	left : 0px;
+	z-index: 10000;
+}
+
+/* ポップアップボタン */
+.buttons {
+	height: 30px;
+}
+
+/* トグルボタン用 */
+.toggle-list {
+	padding:0;
+	margin: 0;
+}
+
+.toggle-list li {
+	display:inline;
+	list-style-type:none;
+}
+
+.toggle-list label input {
+     display:none;
+}
+
+.toggle-list label:hover {
+	border-color:#69a;
+	color:#69a;
+}
+
+.toggle-list label {
+	display:inline-block;
+	font-size:16px;
+	padding:2px 10px;
+	background-color:#ddd;
+	color:#999;
+	border:2px solid #bbb;
+	border-radius:20px;
+	text-shadow:1px 1px 1px #fff;
+	box-shadow:inset 1px 1px 5px #fff;
+	cursor:pointer;
+}
+
+.toggle-list label.selected {
+	color:#fff;
+	background-color:#777777;
+	box-shadow: inset 0px 0px 10px #036;
+	border-color:#444;
+	text-shadow:-1px -1px 1px #036;
+}
+
+#toggle {
+	display: block;
+	position: relative;
+	width: 100%;
+	text-align: right;
+	padding:0px;
+	margin-bottom:15px;
+}
+
+/* DIVテーブル */
+div.tableRowTitle {
+	display: block;
+	border-left: 1px solid #666666;
+	border-top: 1px solid #666666;
+	background: #777777;
+	color:#ffffff;
+	text-align:center;
+	font-size: 10pt;
+	font-weight: bold;
+}
+div.row_ttl_1{
+    height: 35px;
+    margin-left:1px;
+}
+div.row_ttl_2{
+    height: 46px;
+    margin-left:1px;
+}
+div.row_ttl_sp_1{
+    height: 81px;
+    margin-left:1px;
+}
+div.row_ttl_sp_2{
+    height: 70px;
+    margin-left:1px;
+}
+
+div.tableRow {
+	display: block;
+	border-left: 1px solid #666666;
+	border-top: 1px solid #666666;
+	text-align:center;
+	font-size: 10pt;
+	margin-top: -1px;
+}
+
+div.tableCell {
+	display: block;
+	float: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	padding-left:5px;
+	padding-right:5px;
+	box-shadow: -1px 0px 0px 0px rgba(102,102,102,1.0) inset;
+	border-bottom: 1px solid #666666;
+}
+
+div.tableCellBango {
+	display: block;
+	float: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	box-shadow: -1px 0px 0px 0px rgba(102,102,102,1.0) inset;
+	border-bottom: 1px solid #666666;
+	padding-left:5px;
+	padding-right:5px;
+}
+div.cell_ttl_1{
+    height: 26px;
+    padding-top: 8px;
+}
+div.cell_ttl_2_1{
+	height: 32px;
+    padding-top: 13px;
+}
+div.cell_ttl_2_2{
+	height: 42px;
+    padding-top: 3px;
+}
+
+div.cell_ttl_sp_1{
+    height:49px;
+    padding-top:31px;
+}
+
+div.cell_ttl_sp_2{
+    height:43px;
+    padding-top:26px;
+}
+
+div.row_dat{
+    height: 30px;
+    margin-left:1px;
+}
+div.row_dat_sp_2{
+    height: 60px;
+    margin-left:1px;
+}
+div.cell_dat{
+    height: 23px;
+    padding-top:6px;
+}
+div.cell_dat_sp_2{
+    height:37px;
+    padding-top:22px;
+}
+div.cell_ttl_sp_2_2 {
+    height:53px;
+    padding-top:16px;
+}
+
+
+div.hiddenData {
+	display: none;
+}
+
+/* ページャー */
+.pagerNavi {
+	display: block;
+	position: relative;
+	width: 100%;
+	height: 25px;
+}
+
+/* テーブル */
+table.lst{
+	border-collapse:collapse;
+	border-spacing:0;
+	background-color:#ffffff;
+	empty-cells:show;
+	text-align:center;
+}
+.lst th{
+	border-top:1px solid #666666;
+	border-right:1px solid #666666;
+	border-left:1px solid #666666;
+	border-bottom:1px solid #666666;
+	color:#ffffff;
+	background-color:#777777;
+	background-position:left top;
+	padding:0.3em 0.5em;
+	text-align:center;
+	font-size: 10pt;
+}
+.lst td{
+	border-left:1px solid #666666;
+	border-right:1px solid #666666;
+	border-bottom:1px solid #666666;
+	padding:0.3em 0.5em;
+	font-size: 10pt;
+}
+
+table.box{
+	border-top:1px solid #666666;
+	border-left:1px solid #666666;
+	border-right:1px solid #666666;
+	border-bottom:1px solid #666666;
+	border-collapse:collapse;
+	border-spacing:0;
+	background-color:#ffffff;
+	empty-cells:show;
+}
+
+table.cross{
+	border-top:1px solid #666666;
+	border-left:1px solid #666666;
+	border-collapse:collapse;
+	border-spacing:0;
+	empty-cells:show;
+	text-align:center;
+	width:100%;
+	height:100%;
+}
+.cross td{
+	border-right:1px solid #666666;
+	border-bottom:1px solid #666666;
+	padding:0.3em 0.5em;
+	font-size: 10pt;
+}
+
+table.field{
+	border-top:0px;
+	border-left:0px;
+	border-collapse:collapse;
+	border-spacing:0;
+}
+.field td{
+	border-right:0px;
+	border-bottom:0px;
+	padding:0.3em 1.0em;
+	font-size: 10pt;
+}
+
+/* 検索条件テーブル */
+table.cndt{
+    font-size: 10pt;
+}
+.cndt tr{
+}
+.cndt td{
+}
+
+.col1{width:100px;}
+.col2{width:180px;}
+.col3{width:700px;}
+.col4{width:50px;}
+.col5{width:250px;}
+.col6{width:350px;}
+
+.bango {
+    text-align: center
+}
+.kin {
+    text-align: right
+}
+.seisansei {
+	text-align: right
+}
+.cnt {
+	text-align: right
+}
+.date {
+    text-align: center
+}
+.ttl {
+	text-align: left
+}
+.kbn {
+	text-align: center
+}
+.cd {
+	text-align: center
+}
+.nm {
+	text-align: left;
+}

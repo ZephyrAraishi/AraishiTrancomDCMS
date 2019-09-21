@@ -1,0 +1,1375 @@
+var mouseDownFlg = 0;//オブジェクト内でマウスが押されたとき:1マウスから離れたとき:0
+var dragFlg = 0;//ドラッグ中を表すフラグ
+var dragObj;//ドラッグ中のオブジェクト
+var wrapperX;//DnDエリアのラッパーの絶対X位置(pt)
+var wrapperY;//DnDエリアのラッパーの絶対Y位置(pt)
+var diffX;//クリック座標のドラッグオブジェクト相対位置(pt)
+var diffY;//クリック座標のドラッグオブジェクト相対位置(pt)
+
+var rowElements1 = new Array();//現在のソーターAに属するオブジェクト配列
+var rowElements2 = new Array();//現在のソーターBに属するオブジェクト配列
+var rowElements3 = new Array();//現在のソーターCに属するオブジェクト配列
+
+var origSorter = '';//移動前のドラッグオブジェクトのソーター位置
+var origPosition = '';//移動前のドラッグオブジェクトの縦位置
+var origLeft = 0;//移動前のドラッグオブジェクトのラッパー相対位置
+var origTop = 0;//移動前のドラッグオブジェクトのラッパー相対位置
+var origTempElement;//元の位置を表すオブジェクト
+var dragDictObj;//ドラッグ中に発生する空白オブジェクト
+var curtainObj;//カーテンオブジェクト
+var dbclickFlag = 0;//ダブルクリック防止フラグ
+var dontMoveFlag = 0;//動かさないフラグ
+var rowMoveLimit1 = 0;//ソーターAの動かすリミット
+var rowMoveLimit2 = 0;//ソーターBの動かすリミット
+var rowMoveLimit3 = 0;//ソーターCの動かすリミット
+
+
+//初期化
+function initPanel() {
+
+	//オブジェクトに影をつける。
+	applyDropShadows('div.' + DIV_PANEL_BASE_CLASS,DIV_PANEL_SHADOW_CLASS);
+
+	//オブジェクトにイベントをつける
+	var panels = $(DIV_PANEL_AREA_ID).getElementsBySelector("." + DIV_PANEL_CLASS);
+
+    for(i=0; i < panels.length; i++) {
+
+		panels[i].observe("mousedown",mouseDownEvent);
+		panels[i].observe("mousemove",mouseMoveEvent);
+		panels[i].observe("mouseup",mouseUpEvent);
+		panels[i].observe("mouseleave",mouseLeaveEvent);
+
+		panels[i].setStyle({zIndex:"0"});
+
+		//現在のソーター内のオブジェクト数を取得
+		if (panels[i].getStyle("left") == "0px") {
+
+			rowElements1[rowElements1.length] = panels[i];
+		} else if (panels[i].getStyle("left") == "330px") {
+
+			rowElements2[rowElements2.length] = panels[i];
+		} else {
+
+			rowElements3[rowElements3.length] = panels[i];
+		}
+
+		var elements = panels[i].getElementsBySelector("div");
+		var tempFlag = false;
+
+		for (var m=0 ; m < elements.length; m++) {
+
+			if (elements[m].hasClassName(DIV_DATA_KBN_STATUS_CLASS)) {
+
+				if (elements[m].innerHTML == '01') {
+
+					tempFlag = true;
+				}
+
+			}
+
+			if (elements[m].hasClassName(DIV_DATA_TOP_PRIORITY_FLG_CLASS)) {
+
+				if (elements[m].innerHTML == '1') {
+
+					tempFlag = true;
+				}
+
+			}
+		}
+
+		if (tempFlag == true) {
+
+			var dontMoveCurtain = new Element("div");
+			dontMoveCurtain.addClassName(DIV_PANEL_DONT_MOVE_CLASS);
+			dontMoveCurtain.setStyle({
+				display:"block",
+				position:"absolute",
+				width: "280px",
+				height: "108px",
+				top: "0px",
+				left: "0px"
+			});
+			panels[i].insert(dontMoveCurtain);
+		}
+	}
+
+	//リミット初期化
+	rowMoveLimit1 = 0;
+	rowMoveLimit2 = 0;
+	rowMoveLimit3 = 0;
+
+	//ソーターAのリミット
+	for(i=0; i < rowElements1.length; i++) {
+
+		var elements = rowElements1[i].getElementsBySelector("div");
+
+		for (var m=0 ; m < elements.length; m++) {
+
+			if (elements[m].hasClassName(DIV_PANEL_DONT_MOVE_CLASS)) {
+
+				rowMoveLimit1 = i + 1;
+
+				elements[m].setStyle({
+					zIndex: "0"
+				});
+
+				break;
+			}
+		}
+	}
+
+	//ソーターBのリミット
+	for(i=0; i < rowElements2.length; i++) {
+
+		var elements = rowElements2[i].getElementsBySelector("div");
+
+		for (var m=0 ; m < elements.length; m++) {
+
+			if (elements[m].hasClassName(DIV_PANEL_DONT_MOVE_CLASS)) {
+
+				rowMoveLimit2 = i + 1;
+
+				elements[m].setStyle({
+					zIndex: "0"
+				});
+
+				break;
+			}
+		}
+	}
+
+	//ソーターCのリミット
+	for(i=0; i < rowElements3.length; i++) {
+
+		var elements = rowElements3[i].getElementsBySelector("div");
+
+		for (var m=0 ; m < elements.length; m++) {
+
+			if (elements[m].hasClassName(DIV_PANEL_DONT_MOVE_CLASS)) {
+
+				rowMoveLimit3 = i + 1;
+
+				elements[m].setStyle({
+					zIndex: "0"
+				});
+
+				break;
+			}
+		}
+	}
+
+	//ボディにマウスがオブジェクトから離れた場合の対策
+	$$("body")[0].observe("mousemove",mouseMoveBodyEvent);
+	$$("body")[0].observe("mouseleave",mouseLeaveBodyEvent);
+	$$("body")[0].observe("mouseup",mouseUpBodyEvent);
+
+}
+
+//マウスダウン
+function mouseDownEvent(event) {
+
+	//右クリックだったら終了
+	if (event.isRightClick()) {
+
+		return;
+	}
+
+	//ダブルクリックだったら終了
+	if (dbclickFlag == 1) {
+		dbclickFlag = 0;
+		return;
+	}
+
+	//イベントオブジェクトが想定内のクラスである
+	var eventObj = Event.element(event);
+
+	if (checkPanelObject(eventObj) == false) {
+
+		return;
+	}
+
+	//イベントオブジェクトがパネルクラス内である
+	var panel = Event.element(event);
+
+	while(true) {
+
+		if (panel.hasClassName(DIV_PANEL_CLASS)) {
+
+			break;
+		}
+
+		try {
+			panel = panel.up("div");
+		} catch(e) {
+			return;
+		}
+	}
+
+	//イベントオブジェクトに影がついている
+	var elements = panel.getElementsBySelector("div");
+	var shadowFlg = false;
+
+	for (var i = 0; i < elements.length; i++) {
+
+		if (elements[i].hasClassName(DIV_PANEL_SHADOW_CLASS)) {
+			shadowFlg = true;
+		}
+
+	}
+
+	if (shadowFlg == false) {
+		return;
+	}
+
+	//ドラッグできるオブジェクトなのか
+	var elements = panel.getElementsBySelector("div");
+	dontMoveFlag = 0;
+
+	for (var i=0 ; i < elements.length; i++) {
+
+		if (elements[i].hasClassName(DIV_DATA_KBN_STATUS_CLASS)) {
+
+			if (elements[i].innerHTML == '01') {
+
+				dontMoveFlag = 1;
+			}
+		}
+
+		if (elements[i].hasClassName(DIV_PANEL_DONT_MOVE_CLASS)) {
+
+			dontMoveFlag = 1;
+		}
+	}
+
+	//ドラッグオブジェクトを取得
+	dragObj = panel;
+
+	//動かせない場合；
+	if (dontMoveFlag == 1) {
+
+		//カーテン追加
+		curtainObj = new Element("div");
+		curtainObj.addClassName(DIV_PANEL_DRAG_CARTAIN_CLASS);
+		curtainObj.setStyle({
+			display:"block",
+			position:"absolute",
+			width: "309px",
+			height: "108px",
+			top: "0px",
+			left: "0px"
+		});
+		panel.insert(curtainObj);
+
+		mouseDownFlg = 1;
+		return;
+	}
+
+	//現在の位置を取得
+	for (var i=0 ; i < elements.length; i++) {
+
+		if (elements[i].hasClassName(DIV_DATA_CURRENT_SORTER_CLASS)) {
+			origSorter = elements[i].innerHTML;
+		}
+
+		if (elements[i].hasClassName(DIV_DATA_CURRENT_ORDER_CLASS)) {
+			origPosition = elements[i].innerHTML;
+		}
+	}
+
+
+	//座標を保持
+	var offsets = dragObj.cumulativeOffset();
+    diffX =  Event.pointerX(event) - offsets[0];
+    diffY =  Event.pointerY(event) - offsets[1];
+
+    offsets = $(DIV_PANEL_AREA_ID).cumulativeOffset();
+    wrapperX = offsets[0];
+	wrapperY = offsets[1];
+
+	origLeft = parseInt(dragObj.getStyle("left").replace("px", ""), 10);
+	origTop = parseInt(dragObj.getStyle("top").replace("px", ""), 10);
+
+
+	//ダウンフラグを立てる
+	mouseDownFlg = 1;
+
+	//カーテン追加
+	curtainObj = new Element("div");
+	curtainObj.addClassName(DIV_PANEL_DRAG_CARTAIN_CLASS);
+	curtainObj.setStyle({
+		display:"block",
+		position:"absolute",
+		width: "309px",
+		height: "108px",
+		top: "0px",
+		left: "0px"
+	});
+	dragObj.insert(curtainObj);
+
+}
+
+
+
+//マウスムーブイベント
+function mouseMoveEvent(event) {
+
+	if (mouseDownFlg == 1 ) {
+
+		//動かして良いか
+		if (dontMoveFlag == 1) {
+
+			//カーテンを外す
+			var divs = dragObj.childElements();
+
+			for (var i=0; i < divs.length; i++) {
+
+				if (divs[i].hasClassName(DIV_PANEL_DRAG_CARTAIN_CLASS)) {
+
+					divs[i].remove();
+					break;
+				}
+			}
+
+			return;
+		}
+
+		//ドラッグ開始時
+		if (dragFlg == 0) {
+
+			//イベントオブジェクトが想定内のクラスである
+			var eventObj = Event.element(event);
+
+			if (checkPanelObject(eventObj) == false) {
+
+				return;
+			}
+
+			//イベントオブジェクトがパネルクラス内である
+			var panel = Event.element(event);
+
+			while(true) {
+
+				if (panel.hasClassName(DIV_PANEL_CLASS)) {
+
+					break;
+				}
+
+				try {
+					panel = panel.up("div");
+				} catch(e) {
+					return;
+				}
+			}
+
+			//イベントオブジェクトがドラッグオブジェクトである
+			if (panel != dragObj) {
+
+				return;
+			}
+
+			//ドラッグ開始
+			dragFlg = 1;
+
+
+			//影削除（影が別オブジェクトに重なったときおかしい)
+			var elements = dragObj.getElementsBySelector("div");
+			var shadowFlg = false;
+			var shadowDiv;
+			var panelBaseDiv;
+
+			for (var i = 0; i < elements.length; i++) {
+
+				if (elements[i].hasClassName(DIV_PANEL_SHADOW_CLASS)) {
+					shadowFlg = true;
+					shadowDiv = elements[i];
+				}
+
+				if (elements[i].hasClassName(DIV_PANEL_BASE_CLASS)) {
+					panelBaseDiv = elements[i];
+				}
+			}
+
+			if (shadowFlg) {
+
+				var element = panelBaseDiv.clone();
+				shadowDiv.remove();
+
+				element.setStyle({
+					height: "108px"
+				});
+				dragObj.insert({top:element});
+
+			} else {
+				return;
+			}
+
+			//ボーダー追加
+			dragObj.setStyle({border: DIV_PANEL_DRAG_BORDER});
+
+
+			//元の位置に目印オブジェクト追加
+			origTempElement = new Element("div");
+			origTempElement.addClassName(DIV_PANEL_TMP_MARK_CLASS);
+			origTempElement.setStyle({
+				display:"block",
+				position:"absolute",
+				width: "300px",
+				top: origTop + "px",
+				left: origLeft + "px",
+				height: "100px",
+				zIndex: "0"
+			});
+			$(DIV_PANEL_AREA_ID).insert(origTempElement);
+
+			//移動中のオブジェクトは配列から外して
+			//代わりにクローンオブジェクトを入れる
+			var elements;
+
+			if (origSorter == SORTER_CD_1) {
+				elements = rowElements1;
+			} else if (origSorter == SORTER_CD_2) {
+				elements = rowElements2;
+			} else if (origSorter == SORTER_CD_3) {
+				elements = rowElements3;
+			}
+
+			var tempElements = new Array();
+			for ( var i=0; i < elements.length; i++) {
+				if (elements[i] != dragObj) {
+					tempElements[i] = elements[i];
+				} else {
+					tempElements[i] = origTempElement;
+				}
+			}
+
+			if (origSorter == SORTER_CD_1) {
+				rowElements1 = tempElements;
+			} else if (origSorter == SORTER_CD_2) {
+				rowElements2 = tempElements;
+			} else if (origSorter == SORTER_CD_3) {
+				rowElements3 = tempElements;
+			}
+
+		}
+
+		var offset = dragObj.positionedOffset();
+
+		dragObj.setStyle({
+			top: Event.pointerY(event) - wrapperY - diffY + "px",
+			left: Event.pointerX(event) -wrapperX - diffX + "px",
+			width: "308px",
+			height: "108px",
+			zIndex:"100"
+		});
+
+		//現在地取得
+		var sorter = positionSorter(parseInt(dragObj.getStyle("left").replace("px", ""), 10) + diffX);
+		var position = positionOrder(parseInt(dragObj.getStyle("top").replace("px", ""), 10) + diffY,sorter);
+
+		//オブジェクトが範囲内
+		if (sorter != "" && position != "") {
+
+			//目印オブジェクトではない場合
+			//空白オブジェクトを挿入
+			var elements;
+			var rowMoveLimit;
+
+			if (sorter == SORTER_CD_1) {
+				elements = rowElements1;
+				rowMoveLimit = rowMoveLimit1;
+			} else if (sorter == SORTER_CD_2) {
+				elements = rowElements2;
+				rowMoveLimit = rowMoveLimit2;
+			} else if (sorter == SORTER_CD_3) {
+				elements = rowElements3;
+				rowMoveLimit = rowMoveLimit3;
+			}
+
+			if (position <= rowMoveLimit) {
+
+				position = rowMoveLimit + 1;
+			}
+
+
+			//空白を入れるか判断
+			//一番したに挿入
+			if( position > elements.length) {
+
+				removeWhiteSpace();
+				setReLocate();
+
+			} else if (!elements[position - 1].hasClassName(DIV_PANEL_TMP_MARK_CLASS) && !elements[position - 1].hasClassName(DIV_PANEL_TMP_SPACE_CLASS)) {
+
+				removeWhiteSpace();
+
+				if (sorter == SORTER_CD_1) {
+					elements = rowElements1;
+				} else if (sorter == SORTER_CD_2) {
+					elements = rowElements2;
+				} else if (sorter == SORTER_CD_3) {
+					elements = rowElements3;
+				}
+
+
+				//位置が目印オブジェクトがある場合スペースを入れない
+				var bool = true;
+
+				if (position <= elements.length) {
+
+					if (elements[position - 1].hasClassName(DIV_PANEL_TMP_MARK_CLASS)) {
+
+						bool = false;
+					}
+				}
+
+				//上に目印オブジェクトがある場合スペースを入れない
+				if (position > 1) {
+
+				   if (elements[position - 2].hasClassName(DIV_PANEL_TMP_MARK_CLASS)) {
+
+						bool = false;
+					}
+
+				}
+
+				if (bool) {
+
+					//空白を入れる
+					dragDictObj = new Element("div");
+					dragDictObj.addClassName(DIV_PANEL_TMP_SPACE_CLASS);
+					dragDictObj.setStyle({
+						display:"block",
+						position:"absolute",
+						width: "300px",
+						top: getTop(position) + "px",
+						left: getLeft(sorter) + "px",
+						height: "100px",
+						zIndex: "0"
+					});
+					$(DIV_PANEL_AREA_ID).insert(dragDictObj);
+
+					var tempElements = new Array();
+					var count =0;
+					for ( var i=0; i < elements.length +1; i++) {
+
+						if (i + 1 == position) {
+							tempElements[i] = dragDictObj;
+						} else {
+							tempElements[i] = elements[count++];
+						}
+					}
+
+					if (sorter == SORTER_CD_1) {
+						rowElements1 = tempElements;
+					} else if (sorter == SORTER_CD_2) {
+						rowElements2 = tempElements;
+					} else if (sorter == SORTER_CD_3) {
+						rowElements3 = tempElements;
+					}
+
+				}
+
+				//再配置
+				setReLocate();
+
+			} else if (elements[position - 1].hasClassName(DIV_PANEL_TMP_MARK_CLASS)) {
+
+				removeWhiteSpace();
+				setReLocate();
+			}
+		}
+	} else {
+
+		if (dragObj != null) {
+			returnPosition();
+		}
+
+
+	}
+}
+
+//ボディのマウスムーブイベント
+function mouseMoveBodyEvent(event) {
+
+	if (mouseDownFlg == 1) {
+
+		if (dragFlg == 1) {
+
+			var offset = dragObj.positionedOffset();
+
+			dragObj.setStyle({
+				top: Event.pointerY(event) - wrapperY - diffY + "px",
+				left: Event.pointerX(event) -wrapperX - diffX + "px",
+				zIndex:"100"
+			});
+		}
+	}
+
+	setTimeout(ReLocateAfterMouseMove, 1000);
+}
+
+//マウスリーブイベント
+function mouseLeaveEvent(event) {
+
+	if (mouseDownFlg == 1) {
+
+		if (dragFlg == 1) {
+
+			var offset = dragObj.positionedOffset();
+
+			dragObj.setStyle({
+				top: Event.pointerY(event) - wrapperY - diffY + "px",
+				left: Event.pointerX(event) -wrapperX - diffX + "px",
+				zIndex:"100"
+			});
+		}
+	}
+
+	setTimeout(ReLocateAfterMouseMove, 1000);
+}
+
+//ボディのマウスリーブイベント
+function mouseLeaveBodyEvent(event) {
+
+	if (mouseDownFlg == 1) {
+
+		if (dragFlg == 1) {
+
+			returnPosition();
+
+		}
+	}
+
+	mouseDownFlg = 0;
+	dragFlg = 0;
+	dragObj = null;
+	wrapperX = 0;
+	wrapperY = 0;
+	diffX = 0;
+	diffY = 0;
+	origSorter = '';
+	origPosition = '';
+	origLeft = 0;
+	origTop = 0;
+	origTempElement = null;
+	dragDictObj = null;
+}
+
+//ボディのマウスアップイベント
+function mouseUpBodyEvent(event) {
+
+	if (mouseDownFlg == 1) {
+
+		if (dragFlg == 1) {
+
+			returnPosition();
+
+		}
+	}
+}
+
+//マウスアップイベント
+function mouseUpEvent(event) {
+
+	if (mouseDownFlg == 1) {
+
+		//影がついているか
+		var elements = dragObj.getElementsBySelector("div");
+		var cartainFlg = false;
+
+		for (var i = 0; i < elements.length; i++) {
+
+			if (elements[i].hasClassName(DIV_PANEL_DRAG_CARTAIN_CLASS)) {
+				cartainFlg = true;
+				break;
+			}
+
+		}
+
+		if (dragFlg == 1) {
+
+			//ドラッグオブジェがある
+			if (dragObj == null) {
+				mouseDownFlg = 0;
+				dragFlg = 0;
+				dragObj = null;
+				wrapperX = 0;
+				wrapperY = 0;
+				diffX = 0;
+				diffY = 0;
+				origSorter = '';
+				origPosition = '';
+				origLeft = 0;
+				origTop = 0;
+				origTempElement = null;
+				dragDictObj = null;
+				return;
+			}
+
+			//イベントオブジェクトが想定内のクラスである
+			var eventObj = Event.element(event);
+
+			if (checkPanelObject(eventObj) == false) {
+
+				returnPosition();
+				return;
+			}
+
+			//イベントオブジェクトがパネルクラス内である
+			var panel = Event.element(event);
+
+			while(true) {
+
+				if (panel.hasClassName(DIV_PANEL_CLASS)) {
+
+					break;
+				}
+
+				try {
+					panel = panel.up("div");
+				} catch(e) {
+
+					returnPosition();
+					return;
+				}
+			}
+
+			//イベントオブジェクトがドラッグオブジェクトである
+			if (panel != dragObj) {
+
+				returnPosition();
+				return;
+			}
+
+			//ベースの大きさを元に戻す
+			var elements = dragObj.getElementsBySelector("div");
+
+			for (var i = 0; i < elements.length; i++) {
+
+
+				if (elements[i].hasClassName(DIV_PANEL_BASE_CLASS)) {
+					elements[i].setStyle({height:"100px"});
+				}
+
+			}
+
+			//現在地取得
+			var sorter = positionSorter(parseInt(dragObj.getStyle("left").replace("px", ""), 10) + diffX);
+			var position = positionOrder(parseInt(dragObj.getStyle("top").replace("px", ""), 10) + diffY,sorter);
+
+
+			var eventObj = Event.element(event);
+
+			var bool = checkPanelObject(eventObj);
+
+			//オブジェクトが範囲外でドロップされた場合
+			if (sorter == "" || position == "" || bool == false) {
+
+
+				var elements;
+
+				if (origSorter == SORTER_CD_1) {
+					elements = rowElements1;
+				} else if (origSorter == SORTER_CD_2) {
+					elements = rowElements2;
+				} else if (origSorter == SORTER_CD_3) {
+					elements = rowElements3;
+				}
+
+				var tempElements = new Array();
+				var count = 0;
+				for ( var i=0; i < elements.length + 1; i++) {
+					if (i == origPosition - 1) {
+						tempElements[i] = dragObj;
+					} else {
+						tempElements[i] = elements[count++];
+					}
+				}
+
+				if (origSorter == SORTER_CD_1) {
+					rowElements1 = tempElements;
+				} else if (origSorter == SORTER_CD_2) {
+					rowElements2 = tempElements;
+				} else if (origSorter == SORTER_CD_3) {
+					rowElements3 = tempElements;
+				}
+
+			//ドロップされた場合
+			} else {
+
+
+				var elements;
+				var rowMoveLimit;
+
+				if (sorter == SORTER_CD_1) {
+					elements = rowElements1;
+					rowMoveLimit = rowMoveLimit1;
+				} else if (sorter == SORTER_CD_2) {
+					elements = rowElements2;
+					rowMoveLimit = rowMoveLimit2;
+				} else if (sorter == SORTER_CD_3) {
+					elements = rowElements3;
+					rowMoveLimit = rowMoveLimit3;
+				}
+
+				if (position <= rowMoveLimit) {
+
+					position = rowMoveLimit + 1;
+				}
+
+
+				var tempElements = new Array();
+				var count = 0;
+				for ( var i=0; i < elements.length + 1; i++) {
+					if (i == position - 1) {
+						tempElements[i] = dragObj;
+					} else {
+						tempElements[i] = elements[count++];
+					}
+				}
+
+				if (sorter == SORTER_CD_1) {
+					rowElements1 = tempElements;
+				} else if (sorter == SORTER_CD_2) {
+					rowElements2 = tempElements;
+				} else if (sorter == SORTER_CD_3) {
+					rowElements3 = tempElements;
+				}
+			}
+
+			//余分なのを消す
+			removeWhiteSpace();
+			removeOrigSpace();
+			setReLocate();
+			setReLocateData();
+
+
+			//カーテンを外す
+			var divs = dragObj.childElements();
+
+			for (var i=0; i < divs.length; i++) {
+
+				if (divs[i].hasClassName(DIV_PANEL_DRAG_CARTAIN_CLASS)) {
+
+					divs[i].remove();
+					break;
+				}
+			}
+
+			//ボーダーを外す
+			dragObj.setStyle({
+				border: "none",
+				zIndex: "0"
+			});
+
+			//影がついているか
+			var elements = dragObj.getElementsBySelector("div");
+			var shadowFlg = false;
+
+			for (var i = 0; i < elements.length; i++) {
+
+				if (elements[i].hasClassName(DIV_PANEL_SHADOW_CLASS)) {
+					shadowFlg = true;
+					break;
+				}
+			}
+
+			//影をつける
+			if (shadowFlg == false) {
+
+				var dragId = dragObj.getAttribute("id");
+
+				applyDropShadows('div#' + dragId + " ." + DIV_PANEL_BASE_CLASS,DIV_PANEL_SHADOW_CLASS);
+			}
+
+		} else if (cartainFlg == false) {
+
+		} else {
+
+			clickPopUp(event);
+
+			//カーテンを外す
+			var divs = dragObj.childElements();
+
+			for (var i=0; i < divs.length; i++) {
+
+				if (divs[i].hasClassName(DIV_PANEL_DRAG_CARTAIN_CLASS)) {
+
+					divs[i].remove();
+					break;
+				}
+			}
+
+		}
+
+	}
+
+	setTimeout(ReLocateAfterMouseUp, 1000);
+
+
+	mouseDownFlg = 0;
+	dragFlg = 0;
+	dragObj = null;
+	wrapperX = 0;
+	wrapperY = 0;
+	diffX = 0;
+	diffY = 0;
+	origSorter = '';
+	origPosition = '';
+	origLeft = 0;
+	origTop = 0;
+	origTempElement = null;
+	dragDictObj = null;
+
+}
+
+function returnPosition() {
+
+	//ベースの大きさを元に戻す
+	var elements = dragObj.getElementsBySelector("div");
+
+	for (var i = 0; i < elements.length; i++) {
+
+
+		if (elements[i].hasClassName(DIV_PANEL_BASE_CLASS)) {
+			elements[i].setStyle({height:"100px"});
+		}
+	}
+
+	//カーテンを外す
+	var divs = dragObj.childElements();
+
+	for (var i=0; i < divs.length; i++) {
+
+		if (divs[i].hasClassName(DIV_PANEL_DRAG_CARTAIN_CLASS)) {
+
+			divs[i].remove();
+			break;
+		}
+	}
+
+	//ボーダーを外す
+	dragObj.setStyle({
+		border: "none",
+		zIndex: "0"
+	});
+
+	//影をつける
+	var elements = dragObj.getElementsBySelector("div");
+	var shadowFlg = true;
+
+	for (var i = 0; i < elements.length; i++) {
+
+		if (elements[i].hasClassName(DIV_PANEL_SHADOW_CLASS)) {
+			shadowFlg = false;
+		}
+
+	}
+
+	if (shadowFlg) {
+
+		var dragId = dragObj.getAttribute("id");
+
+		applyDropShadows('div#' + dragId + " ." + DIV_PANEL_BASE_CLASS,DIV_PANEL_SHADOW_CLASS);
+	}
+
+	//余分なのを消す
+	removeWhiteSpace();
+	removeOrigSpace();
+
+
+	//元に戻す
+	var elements;
+
+	if (origSorter == SORTER_CD_1) {
+		elements = rowElements1;
+	} else if (origSorter == SORTER_CD_2) {
+		elements = rowElements2;
+	} else if (origSorter == SORTER_CD_3) {
+		elements = rowElements3;
+	}
+
+	var tempElements = new Array();
+	var count = 0;
+	for ( var i=0; i < elements.length + 1; i++) {
+		if (i == origPosition - 1) {
+			tempElements[i] = dragObj;
+		} else {
+			tempElements[i] = elements[count++];
+		}
+	}
+
+	if (origSorter == SORTER_CD_1) {
+		rowElements1 = tempElements;
+	} else if (origSorter == SORTER_CD_2) {
+		rowElements2 = tempElements;
+	} else if (origSorter == SORTER_CD_3) {
+		rowElements3 = tempElements;
+	}
+
+
+	setReLocate();
+	setReLocateData();
+
+	mouseDownFlg = 0;
+	dragFlg = 0;
+	dragObj = null;
+	wrapperX = 0;
+	wrapperY = 0;
+	diffX = 0;
+	diffY = 0;
+	origSorter = '';
+	origPosition = '';
+	origLeft = 0;
+	origTop = 0;
+	origTempElement = null;
+	dragDictObj = null;
+}
+
+//leftからソーター位置を取得
+function positionSorter(leftPosition) {
+
+	if ( 0 <= leftPosition && leftPosition <= 300) {
+		return SORTER_CD_1;
+	} else if ( 330 <= leftPosition && leftPosition <= 630) {
+		return SORTER_CD_2;
+	} else if ( 660 <= leftPosition && leftPosition <= 960) {
+		return SORTER_CD_3;
+	}
+
+	return "";
+}
+
+//topとソーター位置から、順番を取得
+function positionOrder(topPosition,sorter) {
+
+	if (sorter == SORTER_CD_1) {
+
+		limit = 130 * rowElements1.length;
+
+		if (0 > topPosition) {
+			return "";
+		}
+
+		if (topPosition > limit) {
+			return rowElements1.length + 1;
+		}
+
+		return Math.floor(topPosition / 130) + 1;
+
+	} else if (sorter == SORTER_CD_2) {
+
+		limit = 130 * rowElements2.length;
+
+		if (0 > topPosition) {
+			return "";
+		}
+
+		if (topPosition > limit) {
+			return rowElements2.length + 1;
+		}
+
+		return Math.floor(topPosition / 130) + 1;
+
+	} else if (sorter == SORTER_CD_3) {
+
+		limit = 130 * rowElements3.length;
+
+		if (0 > topPosition) {
+			return "";
+		}
+
+		if (topPosition > limit) {
+			return rowElements3.length + 1;
+		}
+
+		return Math.floor(topPosition / 130) + 1;
+
+	}
+
+
+	return "";
+}
+
+//ソーターからleftを取得
+function getLeft(sorter) {
+
+	if (sorter == SORTER_CD_1) {
+		return 0;
+	} else if (sorter == SORTER_CD_2) {
+		return 330;
+	} else if (sorter == SORTER_CD_3) {
+		return 660;
+	}
+
+	return 0;
+}
+
+//順番からTOPを取得
+function getTop(order) {
+	return (order - 1) * 130;
+}
+
+//空白を消す
+function removeWhiteSpace() {
+
+	if (dragDictObj != null) {
+
+		var tempElements = new Array();
+		var count =0;
+		for ( var i=0; i < rowElements1.length; i++) {
+
+			if(rowElements1[i] == null) {
+				continue;
+			}
+
+			if (!rowElements1[i].hasClassName(DIV_PANEL_TMP_SPACE_CLASS)) {
+
+				tempElements[count++] = rowElements1[i];
+			}
+		}
+		rowElements1 = tempElements;
+
+		tempElements = new Array();
+		count =0;
+		for ( var i=0; i < rowElements2.length; i++) {
+
+			if(rowElements2[i] == null) {
+				continue;
+			}
+
+			if (!rowElements2[i].hasClassName(DIV_PANEL_TMP_SPACE_CLASS)) {
+
+				tempElements[count++] = rowElements2[i];
+			}
+		}
+		rowElements2 = tempElements;
+
+		tempElements = new Array();
+		count =0;
+		for ( var i=0; i < rowElements3.length; i++) {
+
+			if(rowElements3[i] == null) {
+				continue;
+			}
+
+			if (!rowElements3[i].hasClassName(DIV_PANEL_TMP_SPACE_CLASS)) {
+
+
+				tempElements[count++] = rowElements3[i];
+			}
+		}
+		rowElements3 = tempElements;
+
+		dragDictObj.remove();
+		dragDictObj = null;
+	}
+}
+
+//目印を消す
+function removeOrigSpace() {
+
+	if (origTempElement != null) {
+
+		var tempElements = new Array();
+		var count =0;
+		for ( var i=0; i < rowElements1.length; i++) {
+
+			if(rowElements1[i] == null) {
+				continue;
+			}
+
+			if (!rowElements1[i].hasClassName(DIV_PANEL_TMP_MARK_CLASS)) {
+
+				tempElements[count++] = rowElements1[i];
+			}
+		}
+		rowElements1 = tempElements;
+
+		tempElements = new Array();
+		count =0;
+		for ( var i=0; i < rowElements2.length; i++) {
+
+			if(rowElements2[i] == null) {
+				continue;
+			}
+
+			if (!rowElements2[i].hasClassName(DIV_PANEL_TMP_MARK_CLASS)) {
+
+				tempElements[count++] = rowElements2[i];
+			}
+		}
+		rowElements2 = tempElements;
+
+		tempElements = new Array();
+		count =0;
+		for ( var i=0; i < rowElements3.length; i++) {
+
+			if(rowElements3[i] == null) {
+				continue;
+			}
+
+			if (!rowElements3[i].hasClassName(DIV_PANEL_TMP_MARK_CLASS)) {
+
+				tempElements[count++] = rowElements3[i];
+			}
+		}
+		rowElements3 = tempElements;
+
+		origTempElement.remove();
+		origTempElement = null;
+	}
+}
+
+//再配置
+function setReLocate() {
+
+	for (var i = rowElements1.length -1 ; i >= 0 ; i--) {
+
+		var distX = 0;
+		var distY = i * 130;
+
+		var origX = parseInt(rowElements1[i].getStyle("left").replace("px", ""), 10);
+		var origY = parseInt(rowElements1[i].getStyle("top").replace("px", ""), 10);
+
+		if (distX != origX || distY != origY) {
+
+			new Effect.Move(rowElements1[i], {x: distX,
+											 y: distY,
+											 mode: 'absolute',
+											 duration: DURATION
+									        });
+
+		}
+	}
+
+	for (var i = rowElements2.length -1 ; i >= 0 ; i--) {
+
+		var distX = 330;
+		var distY = i * 130;
+
+		var origX = parseInt(rowElements2[i].getStyle("left").replace("px", ""), 10);
+		var origY = parseInt(rowElements2[i].getStyle("top").replace("px", ""), 10);
+
+		if (distX != origX || distY != origY) {
+
+			var x = distX - origX;
+			var y = distY - origY;
+
+			new Effect.Move(rowElements2[i], {x: distX,
+											 y: distY,
+											 mode: 'absolute',
+											 duration: DURATION
+									        });
+
+		}
+	}
+
+	for (var i = rowElements3.length -1 ; i >= 0 ; i--) {
+
+		var distX = 660;
+		var distY = i * 130;
+
+		var origX = parseInt(rowElements3[i].getStyle("left").replace("px", ""), 10);
+		var origY = parseInt(rowElements3[i].getStyle("top").replace("px", ""), 10);
+
+		if (distX != origX || distY != origY) {
+
+			new Effect.Move(rowElements3[i], {x: distX,
+											 y: distY,
+											 mode: 'absolute',
+											 duration: DURATION
+									        });
+
+		}
+	}
+}
+
+//再度・データを振り直す
+function setReLocateData() {
+
+	try {
+
+		for (var i = 0; i < rowElements1.length; i++) {
+
+			rowElements1[i].getElementsBySelector("div." + DIV_DATA_CURRENT_SORTER_CLASS)[0].update(SORTER_CD_1);
+			rowElements1[i].getElementsBySelector("div." + DIV_DATA_CURRENT_ORDER_CLASS)[0].update( (i + 1) + "");
+		}
+
+		for (var i = 0; i < rowElements2.length; i++) {
+
+			rowElements2[i].getElementsBySelector("div." + DIV_DATA_CURRENT_SORTER_CLASS)[0].update(SORTER_CD_2);
+			rowElements2[i].getElementsBySelector("div." + DIV_DATA_CURRENT_ORDER_CLASS)[0].update( (i + 1) + "");
+		}
+
+		for (var i = 0; i < rowElements3.length; i++) {
+
+			rowElements3[i].getElementsBySelector("div." + DIV_DATA_CURRENT_SORTER_CLASS)[0].update(SORTER_CD_3);
+			rowElements3[i].getElementsBySelector("div." + DIV_DATA_CURRENT_ORDER_CLASS)[0].update( (i + 1) + "");
+		}
+
+	} catch(e) {
+
+	}
+}
+
+//パネル判定
+function checkPanelObject(eventObj) {
+
+	if (eventObj.hasClassName(DIV_PANEL_BASE_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_DRAG_CARTAIN_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_S_BATCH_NM_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_S_BATCH_NO_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_SURYO_PIECE_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_KBN_BATCH_STATUS_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_TOP_PRIORITY_FLG_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_COVER_CLASS)) {
+
+		return true;
+	} else if (eventObj.hasClassName(DIV_PANEL_DONT_MOVE_CLASS)) {
+
+		return true;
+	}
+
+	return false;
+}
+
+var relocateMouseFlg = 0;
+function ReLocateAfterMouseUp() {
+
+	if (relocateMouseFlg == 0) {
+		relocateMouseFlg = 1;
+		setReLocate();
+		setReLocateData();
+		relocateMouseFlg = 0;
+	}
+
+
+}
+
+var relocateMouseFlg2 = 0;
+function ReLocateAfterMouseMove() {
+
+	if (relocateMouseFlg2 == 0) {
+		relocateMouseFlg2 = 1;
+		setReLocate();
+		relocateMouseFlg2 = 0;
+	}
+
+
+}
