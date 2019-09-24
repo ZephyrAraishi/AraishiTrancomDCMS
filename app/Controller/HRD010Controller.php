@@ -85,12 +85,14 @@ class HRD010Controller extends AppController {
 		$return_cd = '';
 		$display = '';
 		$message = '';
+		$del_flg = '';
 
 		//検索条件
 		if (isset($this->request->query['staff_cd'])){
 			$staff_cd = $this->request->query['staff_cd'];
 			$staff_nm = $this->request->query['staff_nm'];
 			$haken_cd = $this->request->query['haken_cd'];
+			$del_flg = $this->request->query['del_flg'];
 		}
 
 		//ページID
@@ -148,7 +150,7 @@ class HRD010Controller extends AppController {
 		if (isset($this->request->query['staff_cd'])) {
 
 			//スタッフリスト取得
-			$lsts = $this->HRD010Model->getStaffList($staff_cd, $staff_nm, $haken_cd);
+			$lsts = $this->HRD010Model->getStaffList($staff_cd, $staff_nm, $haken_cd, $del_flg);
 
 			//ページャーの設定
 			$pageNum = 50;
@@ -443,7 +445,7 @@ class HRD010Controller extends AppController {
 	 * @return   void
 	 */
 	function image_upload(){
-		
+
 		$this->autoLayout = false;
 		$this->autoRender = false;
 
@@ -1424,9 +1426,9 @@ class HRD010Controller extends AppController {
 		}
 
 		$result = array();
-		
+
 		if (!empty($this->data)) {
-		
+
 			$koteiCd = $this->data['kotei'];
 
 			if (!empty($koteiCd)) {
@@ -1437,7 +1439,7 @@ class HRD010Controller extends AppController {
 		// 入力チェック
 		if ($this->HRD010Model->validateJissekiConditions($this->data)) {
 			$jissekiList = $this->HRD010Model->getStaffSyugyoJsk($staff_cd, $this->data);
-			
+
 
 
 			if (empty($jissekiList)) {

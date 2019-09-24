@@ -23,20 +23,28 @@
 			<col width="150px">
 		</colgroup>
 		<tr>
-			<td>スタッフコード</td>
-			<td colspan="2" align="left">
+			<td style="width:140px;">スタッフコード</td>
+			<td colspan="1" align="left">
 				<input type="text" style="width:140px;" id="staff_cd" name="staff_cd" class="han" maxlength="10">
+			</td>
+			<td>有効無効</td>
+			<td align="left">
+			<select id="del_flg" name="del_flg">
+				<option value=""></option>
+				<option value="0">有効のみ</option>
+				<option value="1">無効のみ</option>
+			</select>
 			</td>
 		</tr>
 		<tr>
-			<td>スタッフ名</td>
+			<td style="width:140px;">スタッフ名</td>
 			<td colspan="2" align="left">
 				<input type="text" style="width:140px;" id="staff_nm" name="staff_nm" maxlength="30">
 			</td>
 		</tr>
 		<tr>
-			<td>所属</td>
-			<td align="left">
+			<td style="width:140px;">所属</td>
+			<td colspan="2" align="left">
 			<select style="width:140px;" id="haken_cd" name="haken_cd" >
 				<option value=""></option>
 <?php

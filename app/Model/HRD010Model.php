@@ -297,7 +297,7 @@ class HRD010Model extends DCMSAppModel {
 		return array();
 	}
 
-	public function getStaffList($staff_cd,$staff_nm,$haken_cd) {
+	public function getStaffList($staff_cd,$staff_nm,$haken_cd,$del_flg) {
 
 		$pdo = null;
 
@@ -369,7 +369,21 @@ class HRD010Model extends DCMSAppModel {
 				$firstFlg = 1;
 			}
 
-			$sql .= " ORDER BY";
+			if ($del_flg != null) {
+
+				if ($firstFlg != 0) {
+
+					$sql .= " AND";
+				} else {
+
+					$sql .= " WHERE ";
+				}
+				$sql .= " A.DEL_FLG=" . $del_flg . "";
+
+				$firstFlg = 1;
+			}
+
+				$sql .= " ORDER BY";
 			$sql .= "  DEL_FLG,STAFF_CD";
 
 			$this->queryWithPDOLog($stmt,$pdo,$sql,"スタッフリスト　取得");
