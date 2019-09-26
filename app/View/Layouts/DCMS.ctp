@@ -108,6 +108,10 @@
         <!-- メッセージ表示部分 -->
 
         <?php echo $content_for_layout ?>
+<<<<<<< HEAD
         <div style="position:relative;bottom:0;margin-top:20px;">Copyright (C) 2013-2019 Kasei Co., Ltd. All Rights Reserved.</div>
+=======
+        <div style="position:relative;bottom:0;margin-top:20px;">Copyright (C) 2013-2015 Kasei Co., Ltd. All Rights Reserved.</div>
+>>>>>>> ff00ce9ac7903e29041444091b3e9820ab7516b5
     </body>
 </html>
