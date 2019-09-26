@@ -5,25 +5,60 @@ var actionUrl3 = "";
 //
 //リロード時の初期処理
 function initReload() {
-
+	
 	//更新メッセージ
 	var get = getRequest();
-
+	
 	if (get.length != 0) {
-
-		if (get["bnri_cyu_cd"] != null) {
-			$("WEX040ModelBnriCyuCd").setValue(get["bnri_cyu_cd"]);
+	
+		if (get["bnri_sai_cd"] != null) {
+			$("WEX050ModelBnriSaiCd").setValue(get["bnri_sai_cd"]);
 		}
-
-		if (get["bnri_cyu_nm"] != null) {
-			$("WEX040ModelBnriCyuNm").setValue(decodeURI(get["bnri_cyu_nm"]));
+		
+		if (get["bnri_sai_nm"] != null) {
+			$("WEX050ModelBnriSaiNm").setValue(decodeURI(get["bnri_sai_nm"]));
 		}
-
-		if (get["bnri_cyu_exp"] != null) {
-			$("WEX040ModelBnriCyuExp").setValue(decodeURI(get["bnri_cyu_exp"]));
+		
+		if (get["kbn_tani"] != null) {
+			$("kbnTaniCombo").setValue(decodeURI(get["kbn_tani"]));
 		}
-
-
+		
+		if (get["kbn_ktd_mktk"] != null) {
+			$("kbnKtdMktkCombo").setValue(decodeURI(get["kbn_ktd_mktk"]));
+		}
+		
+		if (get["kbn_hissu_wk"] != null) {
+			$("kbnHissuWkCombo").setValue(decodeURI(get["kbn_hissu_wk"]));
+		}
+		
+		if (get["kbn_gyomu"] != null) {
+			$("kbnGyomuCombo").setValue(decodeURI(get["kbn_gyomu"]));
+		}
+		
+		if (get["kbn_get_data"] != null) {
+			$("kbnGetDataCombo").setValue(decodeURI(get["kbn_get_data"]));
+		}
+		
+		if (get["kbn_fukakachi"] != null) {
+			$("kbnFukakachiCombo").setValue(decodeURI(get["kbn_fukakachi"]));
+		}
+		
+		if (get["kbn_senmon"] != null) {
+			$("kbnSenmonCombo").setValue(decodeURI(get["kbn_senmon"]));
+		}
+		
+		if (get["kbn_ktd_type"] != null) {
+			$("kbnKtdTypeCombo").setValue(decodeURI(get["kbn_ktd_type"]));
+		}
+		
+		if (get["kbn_uriage"] != null) {
+			$("kbnUriageCombo").setValue(decodeURI(get["kbn_uriage"]));
+		}
+		
+		if (get["keiyaku_buturyo_flg"] != null) {
+			$("keiyakuButuryoFlgCombo").setValue(decodeURI(get["keiyaku_buturyo_flg"]));
+		}
+		
 		//分類コード
 		if (get["kotei"] != null) {
 		
@@ -47,6 +82,11 @@ function initReload() {
 					for (var i=0; i < lis.length; i++) {
 					
 						var liKotei = lis[i].readAttribute('value');
+						
+						if (liKotei == null) {
+							
+							continue;
+						}
 						
 						if (liKotei.length < 3) {
 							
@@ -77,6 +117,11 @@ function initReload() {
 					
 						var liKotei = lis[i].readAttribute('value');
 						
+						if (liKotei == null) {
+							
+							continue;
+						}
+						
 						if (liKotei.length < 3) {
 							
 							liKotei = ("00" + liKotei).slice(-3);
@@ -105,6 +150,11 @@ function initReload() {
 					for (var i=0; i < lis.length; i++) {
 					
 						var liKotei = lis[i].readAttribute('value');
+						
+						if (liKotei == null) {
+							
+							continue;
+						}
 						
 						if (liKotei.length < 3) {
 							
@@ -141,7 +191,7 @@ function initReload() {
 			
 			}
 		}
-
+		
 
 		if (get["return_cd"] != null) {
 
@@ -152,19 +202,19 @@ function initReload() {
 			}  else {
 
 					$("errorMsg").update(Base64.decode(get["message"]));
-
-					//工程
+					
+					//
 					var resultRows = $$("body")[0].getElementsBySelector(".tableRow");
-
+					
 					for(var i=0 ; i< resultRows.length; i++) {
-
+						
 						var flg = resultRows[i].getElementsBySelector(".hiddenData")[1].innerHTML;
-
+						
 						if (parseInt(flg,10) < 3) {
-
+							
 							setRowColor(flg,resultRows[i]);
 						} else {
-
+							
 							setDeletedRowColor(resultRows[i])
 						}
 					}
@@ -172,7 +222,7 @@ function initReload() {
 		}
 
 	}
-
+	
 }
 
 
@@ -244,12 +294,12 @@ function clickUploadButton(event) {
 		resultArray[i] = rowArray;
 	}
 
-
+		
 	//ポストの送信データを作る
 	//JSONへ変更
-
+	
 	var sendArray = {
-
+		
 		'data' : resultArray,
 		'timestamp' : $("timestamp").innerHTML
 	}
@@ -262,12 +312,12 @@ function clickUploadButton(event) {
 	  parameters: postData,
 
 	  onSuccess : onSuccessEvent,
-
+	  
 	  onFailure : function( event )  {
-	    location.href = "/DCMS/WEX040/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000103"));
+	    location.href = "/DCMS/WEX050/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000103"));
 	  },
 	  onException : function( event, ex )  {
-	    location.href = "/DCMS/WEX040/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000104"));
+	    location.href = "/DCMS/WEX050/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000104"));
 	  }
 	});
 }
@@ -275,49 +325,104 @@ function clickUploadButton(event) {
 //
 //更新成功時
 function onSuccessEvent(res) {
-
+	
 	//レスポンス
 	var result = escapePHP(res.responseText.trim());
-
+//	var result = res.responseText.strip();
+	
 	var kotei = '';
-	var bnri_cyu_cd = '';
-	var bnri_cyu_nm = '';
-	var bnri_cyu_exp = '';
+	var bnri_sai_cd = '';
+	var bnri_sai_nm = '';
+
+	var kbn_tani      = '';
+	var kbn_ktd_mktk  = '';
+	var kbn_hissu_wk  = '';
+	var kbn_gyomu     = '';
+	var kbn_get_data  = '';
+	var kbn_fukakachi = '';
+	var kbn_senmon    = '';
+	var kbn_ktd_type  = '';
+	var keiyaku_buturyo_flg  = '';
+	var kbn_uriage    = '';
 
 	var pageID    = '1';
-
+	
 	var get = getRequest();
-
+	
 	if (get.length != 0) {
-
-
+	
 		if (get["kotei"] != null) {
 			kotei = decodeURI(get["kotei"]);
 		}
-
-		if (get["bnri_cyu_cd"] != null) {
-			bnri_cyu_cd = get["bnri_cyu_cd"];
+		
+		if (get["bnri_sai_cd"] != null) {
+			bnri_sai_cd = get["bnri_sai_cd"];
 		}
-
-		if (get["bnri_cyu_nm"] != null) {
-			bnri_cyu_nm = decodeURI(get["bnri_cyu_nm"]);
+		
+		if (get["bnri_sai_nm"] != null) {
+			bnri_sai_nm = get["bnri_sai_nm"];
 		}
-
-		if (get["bnri_cyu_exp"] != null) {
-			bnri_cyu_exp = decodeURI(get["bnri_cyu_exp"]);
+		
+		if (get["kbn_tani"] != null) {
+			kbn_tani = get["kbn_tani"];
+		}
+		
+		if (get["kbn_ktd_mktk"] != null) {
+			kbn_ktd_mktk = get["kbn_ktd_mktk"];
+		}
+		
+		if (get["kbn_hissu_wk"] != null) {
+			kbn_hissu_wk = get["kbn_hissu_wk"];
+		}
+		
+		if (get["kbn_gyomu"] != null) {
+			kbn_gyomu = get["kbn_gyomu"];
+		}
+		
+		if (get["kbn_get_data"] != null) {
+			kbn_get_data = get["kbn_get_data"];
+		}
+		
+		if (get["kbn_fukakachi"] != null) {
+			kbn_fukakachi = get["kbn_fukakachi"];
+		}
+		
+		if (get["kbn_senmon"] != null) {
+			kbn_senmon = get["kbn_senmon"];
+		}
+		
+		if (get["kbn_ktd_type"] != null) {
+			kbn_ktd_type = get["kbn_ktd_type"];
+		}
+		
+		if (get["keiyaku_buturyo_flg"] != null) {
+			keiyaku_buturyo_flg = get["keiyaku_buturyo_flg"];
+		}
+		
+		if (get["kbn_uriage"] != null) {
+			kbn_uriage = get["kbn_uriage"];
 		}
 
 		if (get["pageID"] != null) {
 			pageID = get["pageID"];
 		}
-
+		
 	}
 
-	location.href = "/DCMS/WEX040/index?" + result + "&kotei=" + kotei +
-													 "&bnri_cyu_cd=" + bnri_cyu_cd +
-													 "&bnri_cyu_nm=" + bnri_cyu_nm +
-													 "&bnri_cyu_exp=" + bnri_cyu_exp +
-													 "&pageID=" + pageID +
+	location.href = "/DCMS/WEX050/index?" + result + "&kotei=" + kotei +
+													 "&bnri_sai_cd=" + bnri_sai_cd + 
+													 "&bnri_sai_nm=" + bnri_sai_nm + 
+													 "&kbn_tani=" + kbn_tani + 
+													 "&kbn_ktd_mktk=" + kbn_ktd_mktk + 
+													 "&kbn_hissu_wk=" + kbn_hissu_wk + 
+													 "&kbn_gyomu=" + kbn_gyomu + 
+													 "&kbn_get_data=" + kbn_get_data + 
+													 "&kbn_fukakachi=" + kbn_fukakachi + 
+													 "&kbn_senmon=" + kbn_senmon + 
+													 "&kbn_ktd_type=" + kbn_ktd_type + 
+													 "&keiyaku_buturyo_flg=" + keiyaku_buturyo_flg + 
+													 "&kbn_uriage=" + kbn_uriage + 
+													 "&pageID=" + pageID + 
 													 "&display=true";
 
 }

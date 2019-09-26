@@ -45,10 +45,10 @@ function clickAddButton(event) {
 	  onSuccess : viewInsertPopUp,
 	  
 	  onFailure : function( event )  {
-	    location.href = "/DCMS/WEX040/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000101"));
+	    location.href = "/DCMS/WEX050/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000101"));
 	  },
 	  onException : function( event, ex )  {
-	    location.href = "/DCMS/WEX040/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000102"));
+	    location.href = "/DCMS/WEX050/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000102"));
 	  }
 	});
 }
@@ -61,9 +61,9 @@ function viewInsertPopUp(event) {
 				   {
 					id: "popup",
 					className: "alphacube",
-					title: "中分類マスタ設定",
-					width:900,
-					height:270,
+					title: "細分類マスタ設定",
+					width:1000,
+					height:350,
 					draggable: true,
 					destroyOnclose: true,
 					recenterAuto: false,
@@ -82,80 +82,99 @@ function viewInsertPopUp(event) {
 	
 	//分類を設定
 	initBunruiPopup();
-	
+
+	//ポップアップを保持
 	popUpView = popup
-		
+
 }
 
 
 //OKボタンクリックイベントハンドラ
 function clickOKButton2(window) {
 
+	var bnriDaiNm = "";
+	var bnriCyuNm = "";
+	var bnriDaiCd = "";
+	var bnriCyuCd = "";
+
+	//工程
+	var koteiPopups = $$("body")[0].getElementsBySelector(".koteiPopup");
+	//工程データの取得
+	var koteiPopup = koteiPopups[0];
+	//要素取得
+	var selectElement = koteiPopup.getElementsBySelector(".koteiCd")[0];
+	//工程名
+	if ("" != selectElement.getValue().trim()){
+		bnriDaiNm = koteiPopup.getElementsBySelector(".koteiDaiComboPopup")[0].getValue().trim();
+		bnriCyuNm = koteiPopup.getElementsBySelector(".koteiCyuComboPopup")[0].getValue().trim();
+		bnriDaiCd = selectElement.getValue().trim().substr(0,3);
+		bnriCyuCd = selectElement.getValue().trim().substr(4,3);
+	}
+
 
 	//　入力チェック
 	//必須チェック
-	if (!DCMSValidation.notEmpty($F("koteiCd"))) {
+	if (!DCMSValidation.notEmpty(bnriDaiCd)) {
 		alert(DCMSMessage.format("CMNE000001", "大分類コード"));
 		return;
 	}
-	if (!DCMSValidation.notEmpty($F("bnriCyuCd"))) {
+	if (!DCMSValidation.notEmpty(bnriCyuCd)) {
 		alert(DCMSMessage.format("CMNE000001", "中分類コード"));
 		return;
 	}
-	if (!DCMSValidation.notEmpty($F("bnriCyuNm"))) {
-		alert(DCMSMessage.format("CMNE000001", "中分類名称"));
+	if (!DCMSValidation.notEmpty($F("bnriSaiCd"))) {
+		alert(DCMSMessage.format("CMNE000001", "細分類コード"));
 		return;
 	}
-	if (!DCMSValidation.notEmpty($F("bnriCyuRyaku"))) {
-		alert(DCMSMessage.format("CMNE000001", "中分類略称"));
+	if (!DCMSValidation.notEmpty($F("bnriSaiNm"))) {
+		alert(DCMSMessage.format("CMNE000001", "細分類名称"));
 		return;
 	}
-	if (!DCMSValidation.notEmpty($F("kbn_tani"))) {
-		alert(DCMSMessage.format("CMNE000001", "単位区分"));
-		return;
-	}
-	if (!DCMSValidation.notEmpty($F("kbn_uriage"))) {
-		alert(DCMSMessage.format("CMNE000001", "売上区分"));
+	if (!DCMSValidation.notEmpty($F("bnriSaiRyaku"))) {
+		alert(DCMSMessage.format("CMNE000001", "細分類略称"));
 		return;
 	}
 
 	//数字チェック
-	if (!DCMSValidation.numeric($F("koteiCd"))) {
-		alert(DCMSMessage.format("CMNE000002", "大分類コード"));
+	if (!DCMSValidation.numeric($F("bnriSaiCd"))) {
+		alert(DCMSMessage.format("CMNE000002", "細分類コード"));
 		return;
 	}
-	if (!DCMSValidation.numeric($F("bnriCyuCd"))) {
-		alert(DCMSMessage.format("CMNE000002", "中分類コード"));
+
+
+	if ($F("button_seq") != "" && !DCMSValidation.numeric($F("button_seq"))) {
+		alert(DCMSMessage.format("CMNE000002", "ボタン順"));
+		return;
+	}
+
+	if ($F("list_seq") != "" && !DCMSValidation.numeric($F("list_seq"))) {
+		alert(DCMSMessage.format("CMNE000002", "リスト順"));
 		return;
 	}
 
 	//桁数チェック
-	if (!DCMSValidation.numLength($F("koteiCd"), 3)) {
-		alert(DCMSMessage.format("CMNE000004", "大分類コード","3"));
-		return;
-	}
-	if (!DCMSValidation.numLength($F("bnriCyuCd"), 3)) {
-		alert(DCMSMessage.format("CMNE000004", "中分類コード","3"));
+	if (!DCMSValidation.numLength($F("bnriSaiCd"), 3)) {
+		alert(DCMSMessage.format("CMNE000004", "細分類コード","3"));
 		return;
 	}
 
 	//"000"は入力不可
-	if (parseInt($F("bnriCyuCd"), 10) <= 0 ) {
-		alert(DCMSMessage.format("CMNE000019", "中分類コード","001"));
+	if (parseInt($F("bnriSaiCd"),10) <= 0 ) {
+		alert(DCMSMessage.format("CMNE000019", "細分類コード","001"));
 		return;
 	}
 
 	//最大桁数チェック
-	if (!DCMSValidation.maxLength($F("bnriCyuNm"), 20)) {
-		alert(DCMSMessage.format("CMNE000003", "中分類名称"));
+	if (!DCMSValidation.maxLength($F("bnriSaiNm"), 20)) {
+		alert(DCMSMessage.format("CMNE000003", "細分類名称"));
 		return;
 	}
-	if (!DCMSValidation.maxLength($F("bnriCyuRyaku"), 6)) {
-		alert(DCMSMessage.format("CMNE000003", "中分類略称"));
+	if (!DCMSValidation.maxLength($F("bnriSaiRyaku"), 6)) {
+		alert(DCMSMessage.format("CMNE000003", "細分類略称"));
 		return;
 	}
-	if (!DCMSValidation.maxLength($F("bnriCyuExp"), 40)) {
-		alert(DCMSMessage.format("CMNE000003", "中分類説明"));
+	if (!DCMSValidation.maxLength($F("bnriSaiExp"), 40)) {
+		alert(DCMSMessage.format("CMNE000003", "細分類説明"));
 		return;
 	}
 
@@ -167,75 +186,124 @@ function clickOKButton2(window) {
 	var tableRow = new Element("div");
 	tableRow.addClassName("tableRow row_dat");
 	tableRow.setStyle({
-		width:"1235px"
+		width:"1575px"
 	});
 	
 	var tableCellBango = new Element("div");
 	tableCellBango.addClassName("tableCellBango cell_dat");
 	tableCellBango.setStyle({
-		width:"50px"
+		width:"60px"
 	});
 	tableCellBango.innerHTML = "新規";
 	tableRow.insert(tableCellBango);
 	
-	//8個セル作成
+	//11個セル作成
 	var tableCell = new Element("div");
 	tableCell.addClassName("tableCell cell_dat nm");
 	tableCell.setStyle({
-		width:"140px"
+		width:"100px"
+	});
+	tableRow.insert(tableCell);
+	
+	var tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat nm");
+	tableCell.setStyle({
+		width:"100px"
 	});
 	tableRow.insert(tableCell);
 	
 	var tableCell = new Element("div");
 	tableCell.addClassName("tableCell cell_dat cd");
 	tableCell.setStyle({
-		width:"90px"
-	});
-	tableRow.insert(tableCell);
-	
-	tableCell = new Element("div");
-	tableCell.addClassName("tableCell cell_dat nm");
-	tableCell.setStyle({
-		width:"240px"
-	});
-	tableRow.insert(tableCell);
-	
-	tableCell = new Element("div");
-	tableCell.addClassName("tableCell cell_dat nm");
-	tableCell.setStyle({
-		width:"140px"
-	});
-	tableRow.insert(tableCell);
-	
-	tableCell = new Element("div");
-	tableCell.addClassName("tableCell cell_dat nm");
-	tableCell.setStyle({
-		width:"320px"
-	});
-	tableRow.insert(tableCell);
-	
-	tableCell = new Element("div");
-	tableCell.addClassName("tableCell cell_dat kbn");
-	tableCell.setStyle({
-		width:"75px"
-	});
-	tableRow.insert(tableCell);
-	
-	tableCell = new Element("div");
-	tableCell.addClassName("tableCell cell_dat kbn");
-	tableCell.setStyle({
-		width:"40px"
-	});
-	tableRow.insert(tableCell);
-	
-	tableCell = new Element("div");
-	tableCell.addClassName("tableCell cell_dat kbn");
-	tableCell.setStyle({
 		width:"50px"
 	});
 	tableRow.insert(tableCell);
 
-	//データDIVを4個配置
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat nm");
+	tableCell.setStyle({
+		width:"200px"
+	});
+	tableRow.insert(tableCell);
+
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat nm");
+	tableCell.setStyle({
+		width:"100px"
+	});
+	tableRow.insert(tableCell);
+	
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat nm");
+	tableCell.setStyle({
+		width:"205px"
+	});
+	tableRow.insert(tableCell);
+	
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"80px"
+	});
+	tableRow.insert(tableCell);
+	
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"100px"
+	});
+	tableRow.insert(tableCell);
+	
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"60px"
+	});
+	tableRow.insert(tableCell);
+	
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"60px"
+	});
+	tableRow.insert(tableCell);
+	
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"60px"
+	});
+	tableRow.insert(tableCell);
+
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"60px"
+	});
+	tableRow.insert(tableCell);
+
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"60px"
+	});
+	tableRow.insert(tableCell);
+
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"60px"
+	});
+	tableRow.insert(tableCell);
+
+	tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat kbn");
+	tableCell.setStyle({
+		width:"60px"
+	});
+	tableRow.insert(tableCell);
+
+	//データDIVを13個配置
 //	for (var i=0 ; i< 2; i++) {
 	
 		var hiddenData = new Element("div");
@@ -247,15 +315,63 @@ function clickOKButton2(window) {
 		tableRow.insert(hiddenData);
 	
 		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData BNRI_DAI_CD");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData BNRI_CYU_CD");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
 		hiddenData.addClassName("hiddenData KBN_TANI");
 		tableRow.insert(hiddenData);
 	
 		var hiddenData = new Element("div");
-		hiddenData.addClassName("hiddenData KBN_URIAGE");
+		hiddenData.addClassName("hiddenData KBN_KTD_MKTK");
 		tableRow.insert(hiddenData);
 	
 		var hiddenData = new Element("div");
-		hiddenData.addClassName("hiddenData BNRI_DAI_CD");
+		hiddenData.addClassName("hiddenData KBN_HISSU_WK");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData KBN_GYOMU");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData KBN_GET_DATA");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData KBN_FUKAKACHI");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData KBN_SENMON");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData KBN_KTD_TYPE");
+		tableRow.insert(hiddenData);
+		
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData KEIYAKU_BUTURYO_FLG");
+		tableRow.insert(hiddenData);
+
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData BUTTON_SEQ");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData LIST_SEQ");
+		tableRow.insert(hiddenData);
+	
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData SYURYO_NASI_FLG");
+		tableRow.insert(hiddenData);
+		
+		var hiddenData = new Element("div");
+		hiddenData.addClassName("hiddenData KYORI_FLG");
 		tableRow.insert(hiddenData);
 
 //	}
@@ -271,36 +387,60 @@ function clickOKButton2(window) {
 	
 	// テキスト値取得
 	// 　下、子Viewの中
-	var bnriCyuCd = $F("bnriCyuCd");
-	var bnriCyuNm = $F("bnriCyuNm");
-	var bnriCyuRyaku = $F("bnriCyuRyaku");
-	var bnriCyuExp = $F("bnriCyuExp");
+	var bnriSaiCd = $F("bnriSaiCd");
+	var bnriSaiNm = $F("bnriSaiNm");
+	var bnriSaiRyaku = $F("bnriSaiRyaku");
+	var bnriSaiExp = $F("bnriSaiExp");
 
-	// selectは未選択時にnullになるため""に置き換え
-	var bnriDaiCd = $F("koteiCd");
-	if(bnriDaiCd == null){
-		bnriDaiCd = "";
-	}
 	var kbnTani = $F("kbn_tani");
 	if(kbnTani == null){
 		kbnTani = "";
 	}
-	var kbnUriage = $F("kbn_uriage");
-	if(kbnUriage == null){
-		kbnUriage = "";
+	var kbnKtdMktk = $F("kbn_ktd_mktk");
+	if(kbnKtdMktk == null){
+		kbnKtdMktk = "";
+	}
+	var kbnHissuWk = $F("kbn_hissu_wk");
+	if(kbnHissuWk == null){
+		kbnHissuWk = "";
+	}
+	var kbnGyomu = $F("kbn_gyomu");
+	if(kbnGyomu == null){
+		kbnGyomu = "";
 	}
 
+	var kbnGetData = $F("kbn_get_data");
+	if(kbnGetData == null){
+		kbnGetData = "";
+	}
+	var kbnFukakachi = $F("kbn_fukakachi");
+	if(kbnFukakachi == null){
+		kbnFukakachi = "";
+	}
+	var kbnSenmon = $F("kbn_senmon");
+	if(kbnSenmon == null){
+		kbnSenmon = "";
+	}
+	var kbnKtdType = $F("kbn_ktd_type");
+	if(kbnKtdType == null){
+		kbnKtdType = "";
+	}
+	var keiyakuButuryoFlg = $F("keiyaku_buturyo_flg");
+	if(keiyakuButuryoFlg == null){
+		keiyakuButuryoFlg = "";
+	}
+	
 	//変更項目の処理
-	cells[1].innerHTML = bnriCyuCd;
-	cells[2].innerHTML = bnriCyuNm;
-	cells[3].innerHTML = bnriCyuRyaku;
-	cells[4].innerHTML = bnriCyuExp;
-	cells[7].innerHTML = "0";
+	cells[2].innerHTML = bnriSaiCd;
+	cells[3].innerHTML = bnriSaiNm;
+	cells[4].innerHTML = bnriSaiRyaku;
+	cells[5].innerHTML = bnriSaiExp;
+//	cells[6].innerHTML = "新規";
 
-	// 大分類コードの名称を取得
-	cells[0].innerHTML = $F("koteiText");
+	cells[0].innerHTML = bnriDaiNm;
+	cells[1].innerHTML = bnriCyuNm;
 
-	// 区分の名称を取得
+	// 単位の名称を取得
 	var kbn_tani_nm = "";
 	var options = $A($('kbn_tani').getElementsByTagName('option'));
 	options.each(function(option){
@@ -308,23 +448,77 @@ function clickOKButton2(window) {
 			kbn_tani_nm = option.innerHTML;
 		}
 	});
-	cells[5].innerHTML = kbn_tani_nm;
+	cells[6].innerHTML = kbn_tani_nm;
 
-	// 区分の名称を取得
-	var kbn_uriage_nm = "";
-	var options = $A($('kbn_uriage').getElementsByTagName('option'));
+	// 活動目的の名称を取得
+	var kbn_ktd_mktk_nm = "";
+	var options = $A($('kbn_ktd_mktk').getElementsByTagName('option'));
 	options.each(function(option){
 		if (option.selected) {
-			kbn_uriage_nm = option.innerHTML;
+			kbn_ktd_mktk_nm = option.innerHTML;
 		}
 	});
-	cells[6].innerHTML = kbn_uriage_nm;
+	cells[7].innerHTML = kbn_ktd_mktk_nm;
+
+	// 必須作業区分の名称を取得
+	var kbn_hissu_wk_nm = "";
+	var options = $A($('kbn_hissu_wk').getElementsByTagName('option'));
+	options.each(function(option){
+		if (option.selected) {
+			kbn_hissu_wk_nm = option.innerHTML;
+		}
+	});
+	cells[8].innerHTML = kbn_hissu_wk_nm;
+
+	// 業務区分の名称を取得
+	var kbn_gyomu_nm = "";
+	var options = $A($('kbn_gyomu').getElementsByTagName('option'));
+	options.each(function(option){
+		if (option.selected) {
+			kbn_gyomu_nm = option.innerHTML;
+		}
+	});
+	cells[9].innerHTML = kbn_gyomu_nm;
+
+	// データ取得区分の名称を取得
+	var kbn_get_data_nm = "";
+	var options = $A($('kbn_get_data').getElementsByTagName('option'));
+	options.each(function(option){
+		if (option.selected) {
+			kbn_get_data_nm = option.innerHTML;
+		}
+	});
+	cells[10].innerHTML = kbn_get_data_nm;
+	cells[11].innerHTML = $F("button_seq");
+	cells[12].innerHTML = $F("list_seq");
+
+	var syuryo_nasi_flg = $F("syuryo_nasi_flg");
+	if(syoryo_nasi_flg = "1"){
+		cells[13].innerHTML = "有";
+	}
+
+	var kyori_flg = $F("kyori_flg");
+	if(kyori_flg = "1"){
+		cells[14].innerHTML = "有";
+	}
 
 	data[0].innerHTML = "0";
 	data[1].innerHTML = "2";	//新規フラグ
-	data[2].innerHTML = $F("kbn_tani");
-	data[3].innerHTML = $F("kbn_uriage");
-	data[4].innerHTML = $F("koteiCd");
+	data[2].innerHTML = bnriDaiCd;
+	data[3].innerHTML = bnriCyuCd;
+	data[4].innerHTML = $F("kbn_tani");
+	data[5].innerHTML = $F("kbn_ktd_mktk");
+	data[6].innerHTML = $F("kbn_hissu_wk");
+	data[7].innerHTML = $F("kbn_gyomu");
+	data[8].innerHTML = $F("kbn_get_data");
+	data[9].innerHTML = $F("kbn_fukakachi");
+	data[10].innerHTML = $F("kbn_senmon");
+	data[11].innerHTML = $F("kbn_ktd_type");
+	data[12].innerHTML = $F("keiyaku_buturyo_flg");
+	data[13].innerHTML = $F("button_seq");
+	data[14].innerHTML = $F("list_seq");
+	data[15].innerHTML = $F("syuryo_nasi_flg");
+	data[16].innerHTML = $F("kyori_flg");
 
 
 	tableRow.observe("click",clickPopUp);
@@ -340,7 +534,6 @@ function clickOKButton2(window) {
 		background: "#b0c4de"
 	});
 	
-
 	window.close();
 	dbclickFlag = 0;
 	areaCoverElement.remove();
@@ -359,39 +552,49 @@ function clickCANCELButton2(window) {
 
 
 
-
-
-
-
 //----------------------------　コンボ ----------------------------
 
-//選択した内容をテキストボックスに反映
+// 選択した内容をテキストボックスに反映
 function setMenuProcessPopup( dai_value, cyu_value, sai_value, koutei_dai, koutei_cyu, koutei_sai , koteiNo){
 	// 値格納
-	var processVal;
-	var processNmVal;
+	var processVal = '';
+	var processDaiNmVal = '';
+	var processCyuNmVal = '';
 	
 	// 値の判定
-	if((koutei_dai != '') && (koutei_cyu != '') && (koutei_sai != '')){
+	if((koutei_dai != '') && (koutei_cyu != '')){
 	
 		processVal = dai_value + '_' + cyu_value + '_' + sai_value;
-		processNmVal = koutei_dai + ' > ' + koutei_cyu + ' > ' + koutei_sai;
-	}else if(koutei_cyu != ''){
+//		processNmVal = koutei_sai;
+		processDaiNmVal = koutei_dai;
+		processCyuNmVal = koutei_cyu;
+	}
 	
-		processVal = dai_value + '_' + cyu_value;
-		processNmVal = koutei_dai + ' > ' + koutei_cyu;
-	}else{
+	var top = $('ul_class_' + koteiNo);
 	
-		processVal = dai_value;
-		processNmVal = koutei_dai;
+	while (true) {
+	
+		if (top.hasClassName("koteiPopup") == true) {
+			
+			break;
+		}
+
+		top = top.up("div");
+		
+		if (top == null) {
+		
+			return;
+		}
 	}
 	
 	// hiddenに値をセット
-	$('koteiCd').setValue(processVal);
+	top.getElementsBySelector('.koteiCd')[0].setValue(processVal);
 
+	
 	// 値を代入する
-	$('koteiText').setValue(processNmVal);
-
+	top.getElementsBySelector('.koteiDaiComboPopup')[0].setValue(processDaiNmVal);
+	top.getElementsBySelector('.koteiCyuComboPopup')[0].setValue(processCyuNmVal);
+	
 	//　メニューを消す
 	menuDispPopup(koteiNo);
 	
@@ -587,7 +790,7 @@ function mouseOverEventUL(event) {
 
 }
 
-//マウスオーバ時(工程:大)
+// マウスオーバ時(工程:大)
 function setProcessDaiPopup(event){
 
 	
@@ -679,7 +882,7 @@ function setProcessDaiPopup(event){
 
 }
 
-//マウスオーバ時(工程:中)
+// マウスオーバ時(工程:中)
 function setProcessCyuPopup(event){
 
 
@@ -816,7 +1019,7 @@ function outProcessImgPopup(event){
 
 }
 
-//マウスアウト時
+// マウスアウト時
 function outProcessDaiPopup(event){
 
 		// エレメント取得
@@ -942,13 +1145,13 @@ RemoveMenuPopup.prototype = {
 
 	initialize : function(koteiNo) {
 	
-     this.notRemove = 0;
-     this.koteiNo = koteiNo
-     
- },
- 
- remove : function() {
-     
+        this.notRemove = 0;
+        this.koteiNo = koteiNo
+        
+    },
+    
+    remove : function() {
+        
 	    setTimeout(this.removeThread.bind(this), 500);  
 	},
 	
@@ -956,7 +1159,7 @@ RemoveMenuPopup.prototype = {
 	
 		this.notRemove = 1;	
 	},
-
+  
 	removeThread: function() {
 	
 		if(this.notRemove == 0){
@@ -1011,6 +1214,6 @@ RemoveMenuPopup.prototype = {
 			
 		}
 	}  
- 
- 
+    
+    
 }; 

@@ -1,114 +1,270 @@
-<div style= "position: relative; height: 200px; width: 100%; margin-top: 20px;">
+<div style= "position: relative; height: 295px; width: 100%; margin-top: 20px; margin-left: 20px;">
   <table width="100%" class="field">
-		<colgroup width="50px">
-		<colgroup width="850px">
-		<tbody>
-		<tr style="height:30px;">
-			<td style="width: 20%;text-align: right;">大分類：</td>
-			<td style="width:  5%;"></td>
-			<td style="width: 75%;text-align: left;">
-				<?php echo $this->Form->input('bnriDaiCd', 
-										array('style' => 'width:100px;', 
-											'maxlength' => '3', 
-											'error' => false, 
-											'label' => false, 
-											'div' => false, 
-											'hidden' => false, 
-											'class' => 'han', 
-											'disabled' => 'disabled')) ?>
-			</td>
-		</tr>
-		<tr style="height:30px;">
-			<td style="width: 20%;text-align: right;">中分類コード：</td>
-			<td style="width:  5%;"></td>
-			<td style="width: 75%;text-align: left;">
-				<?php echo $this->Form->input('bnriCyuCd', 
-										array('style' => 'width:100px;', 
-											'maxlength' => '3', 
-											'error' => false, 
-											'label' => false, 
-											'div' => false, 
-											'hidden' => false, 
-											'class' => 'han', 
-											'disabled' => 'disabled')) ?>
-			</td>
-		</tr>
-		<tr style="height:30px;">
-		   <td style="width: 20%;text-align: right;">中分類名称：</td>
-		   <td style="width:  5%;"></td>
-		   <td style="width: 75%;text-align: left;">
-		   		<?php echo $this->Form->input('bnriCyuNm', 
-		   								array('style' => 'width:300px;', 
-		   									'maxlength' => '20', 
-		   									'error' => false, 
-		   									'label' => false, 
-		   									'div' => false, 
-		   									'hidden' => false, 
-		   									'class' => 'zen')) ?>
-		   	</td>
-		</tr>
-		<tr style="height:30px;">
-		   <td style="width: 20%;text-align: right;">中分類略称：</td>
-		   <td style="width:  5%;"></td>
-		   <td style="width: 75%;text-align: left;">
-		   		<?php echo $this->Form->input('bnriCyuRyaku', 
-		   								array('style' => 'width:150px;', 
-		   									'maxlength' => '6', 
-		   									'error' => false, 
-		   									'label' => false, 
-		   									'div' => false, 
-		   									'hidden' => false, 
-		   									'class' => 'zen')) ?>
-		   </td>
-		</tr>
-		<tr style="height:30px;">
-		   <td style="width: 20%;text-align: right;">中分類説明：</td>
-		   <td style="width:  5%;"></td>
-		   <td style="width: 75%;text-align: left;">
-		   		<?php echo $this->Form->input('bnriCyuExp', 
-		   								array('style' => 'width:450px;', 
-		   									'maxlength' => '40', 
-		   									'error' => false, 
-		   									'label' => false, 
-		   									'div' => false, 
-		   									'hidden' => false, 
-		   									'class' => 'zen')) ?>
-		   </td>
-		</tr>
-		<tr style="height:30px;">
-			<td style="width: 20%;text-align: right;">単位区分：</td>
-			<td style="width:  5%;"></td>
-			<td style="width: 75%;text-align: left;">
-				<select id="kbn_tani">
-					<option value=""></option>
-					<?php
-					foreach($kbnTanis as $key => $value) :
-					?>
-					<option value="<?php echo $key ?>"><?php echo $value?></option>
-					<?php
-					endforeach;
-					?>
-				</select>
-			</td>
-		</tr>
-		<tr style="height:30px;">
-			<td style="width: 20%;text-align: right;">売上区分：</td>
-			<td style="width:  5%;"></td>
-			<td style="width: 75%;text-align: left;">
-				<select id="kbn_uriage">
-					<option value=""></option>
-					<?php
-					foreach($kbnUriages as $key => $value) :
-					?>
-					<option value="<?php echo $key ?>"><?php echo $value?></option>
-					<?php
-					endforeach;
-					?>
-				</select>
-			</td>
-		</tr>
+	<colgroup width="150px">
+	<colgroup width="200px">
+	<colgroup width="150px">
+	<colgroup width="200px">
+	<colgroup width="150px">
+	<colgroup width="200px">
+	<tbody>
 
-		</tbody>
+	<!-- １行目 -->
+	<tr style="height:30px;">
+		<td style="text-align:left;" >大分類：</td>
+		<td class="colBnriCd" style="text-align:left;">
+			<?php echo $this->Form->input('bnriDaiCd', 
+							array('style' => 'width:100px;', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'han', 
+								'disabled' => 'disabled')) ?>
+		</td>
+		<td style="text-align:left;" >中分類：</td>
+		<td colspan="3" class="colBnriCd" style="text-align:left;">
+			<?php echo $this->Form->input('bnriCyuCd', 
+							array('style' => 'width:100px;', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'han', 
+								'disabled' => 'disabled')) ?>
+		</td>
+	</tr>
+	<!-- ２行目 -->
+	<tr style="height:30px;">
+		<td style="text-align:left;" >細分類コード：</td>
+		<td colspan="5"  class="colBnriCd" style="text-align:left;">
+			<?php echo $this->Form->input('bnriSaiCd', 
+							array('style' => 'width:100px;', 
+								'maxlength' => '3', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'han', 
+								'disabled' => 'disabled')) ?>
+		</td>
+	</tr>
+	<!-- ３行目 -->
+	<tr style="height:30px;">
+	   <td style="text-align:left;" >細分類名称：</td>
+	   <td colspan="5"  class="colBnriCd" style="text-align:left;">
+	   		<?php echo $this->Form->input('bnriSaiNm', 
+							array('style' => 'width:300px;', 
+								'maxlength' => '20', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'zen')) ?>
+	   	</td>
+	</tr>
+	<!-- ４行目 -->
+	<tr style="height:30px;">
+	   <td style="text-align:left;" >細分類略称：</td>
+	   <td colspan="5"  class="colBnriCd" style="text-align:left;">
+	   		<?php echo $this->Form->input('bnriSaiRyaku', 
+							array('style' => 'width:150px;', 
+								'maxlength' => '6', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'zen')) ?>
+	   </td>
+	</tr>
+	<!-- ５行目 -->
+	<tr style="height:30px;">
+	   <td style="text-align:left;" >細分類説明：</td>
+	   <td colspan="5"  class="colBnriCd" style="text-align:left;">
+	   		<?php echo $this->Form->input('bnriSaiExp', 
+							array('style' => 'width:450px;', 
+								'maxlength' => '40', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'zen')) ?>
+	   </td>
+	</tr>
+	<!-- ６行目 -->
+	<tr style="height:30px;">
+		<td style="text-align:left;" >単位：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_tani" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnTanis as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+		<td style="text-align:left;">活動目的：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_ktd_mktk" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnKtdMktks as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+		<td style="text-align:left;" >必須作業：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_hissu_wk" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnHissuWks as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+	</tr>
+	<!-- ７行目 -->
+	<tr style="height:30px;">
+		<td style="text-align:left;" >業務区分：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_gyomu" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnGyomus as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+		<td style="text-align:left;" >データ取得区分：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_get_data" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnGetDatas as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+		<td style="text-align:left;" >付加価値性：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_fukakachi" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnFukakachis as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+	</tr>
+	<!-- ８行目 -->
+	<tr style="height:30px;">
+		<td style="text-align:left;" >専門区分：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_senmon" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnSenmons as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+		<td style="text-align:left;" >活動タイプ：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kbn_ktd_type" style="width:120px">
+				<option value=""></option>
+				<?php
+				foreach($kbnKtdTypes as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+		<td style="text-align:left;" >契約単位代表物量：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="keiyaku_buturyo_flg" style="width:120px">
+				<?php
+				foreach($keiyakuButuryoFlgs as $key => $value) :
+				?>
+				<option value="<?php echo $key ?>"><?php echo $value?></option>
+				<?php
+				endforeach;
+				?>
+			</select>
+		</td>
+	</tr>
+	<!-- 9行目 -->
+	<tr style="height:30px;">
+		<td style="text-align:left;" >ボタン順：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<?php echo $this->Form->input('button_seq', 
+							array('style' => 'width:100px;', 
+								'maxlength' => '3', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'han')) ?>
+		</td>
+		<td style="text-align:left;" >リスト順：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<?php echo $this->Form->input('list_seq', 
+							array('style' => 'width:100px;', 
+								'maxlength' => '3', 
+								'error' => false, 
+								'label' => false, 
+								'div' => false, 
+								'hidden' => false, 
+								'class' => 'han')) ?>
+		</td>
+		<td style="text-align:left;" >終了無し：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="syuryo_nasi_flg" style="width:120px">
+				<option value="0">無し</option>
+				<option value="1">有り</option>
+			</select>
+		</td>
+	</tr>
+	<!-- 10行目 -->
+	<tr style="height:30px;">
+		<td style="text-align:left;" >距離：</td>
+		<td  class="colBnriCd" style="text-align:left;">
+			<select id="kyori_flg" style="width:120px">
+				<option value=""></option>
+				<option value="0">無し</option>
+				<option value="1">有り</option>
+			</select>
+		</td>
+		<td style="text-align:left;" ></td>
+		<td  class="colBnriCd" style="text-align:left;">
+		</td>
+		<td style="text-align:left;" ></td>
+		<td  class="colBnriCd" style="text-align:left;">
+		</td>
+	</tr>
+	</tbody>
 
   </table>
 </div>

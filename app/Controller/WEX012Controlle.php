@@ -1,8 +1,8 @@
 <?php
 /**
- * WEX040
+ * WEX012
  *
- * 中分類マスタ設定
+ * 組織マスタ設定
  *
  * @category      WEX
  * @package       DCMS
@@ -13,14 +13,13 @@
 App::uses('MMessage', 'Model');
 App::uses('MCommon', 'Model');
 App::uses('MMeisyo', 'Model');
-App::uses('MBunrui', 'Model');
-App::uses('WEX040Model', 'Model');
+App::uses('WEX012Model', 'Model');
 
-class WEX040Controller extends AppController {
+class WEX012Controller extends AppController {
 
-	public $name = 'WEX040';
+	public $name = 'WEX012';
 	public $layout = "DCMS";
-	
+
 	/**
 	 * 起動時処理
 	 * @access   public
@@ -28,17 +27,17 @@ class WEX040Controller extends AppController {
 	 * @return   void
 	 */
 	public function beforeFilter() {
-		
+
 		parent::beforeFilter();
-		
+
 		/* ビューへ設定 */
 		// システム名
 		$this->set('system', Sanitize::stripAll($this->Session->read('system_name')));
-		// サブシステム名		
+		// サブシステム名
 		$this->set('sub_system', Sanitize::stripAll($this->Session->read('menu_subsys')['WEX']));
 		// 機能名
-		$this->set('kino', Sanitize::stripAll($this->Session->read('menu_kino')['WEX']['040']['kino_nm']));
-		
+		$this->set('kino', Sanitize::stripAll($this->Session->read('menu_kino')['WEX']['012']['kino_nm']));
+
 		$this->MCommon = new MCommon($this->Session->read('select_ninusi_cd'),
 		                             $this->Session->read('select_sosiki_cd'),
 		                             $this->name
@@ -49,19 +48,16 @@ class WEX040Controller extends AppController {
 				                     $this->name
 				                     );
 
-		//分類マスタモデル
-		$this->MBunrui = new MBunrui($this->Session->read('select_ninusi_cd'),$this->Session->read('select_sosiki_cd'),$this->name);
-
-		$this->WEX040Model = new WEX040Model($this->Session->read('select_ninusi_cd'),
+		$this->WEX012Model = new WEX012Model($this->Session->read('select_ninusi_cd'),
                                      $this->Session->read('select_sosiki_cd'),
                                      $this->name
                                      );
 
 		/* メッセージマスタ呼び出し */
 		$this->MMessage = new MMessage($this->Session->read('select_ninusi_cd'),$this->Session->read('select_sosiki_cd'),$this->name);
-		
+
 	}
-	
+
 	/**
 	 * 初期表示
 	 * @access   public
@@ -69,7 +65,7 @@ class WEX040Controller extends AppController {
 	 * @return   void
 	 */
 	function index(){
-	
+
 		//ライブラリ読み込み
 		require_once 'Pager.php';
 
@@ -78,17 +74,16 @@ class WEX040Controller extends AppController {
 
 		//Javascript設定
 		$this->set("onload","initReload();".
-							"initPopUp('".Router::url('/WEX040/popup', false)."');" .
-							"initAddRow('".Router::url('/WEX040/popup_insert', false)."');" .
-							"initUpdate('".Router::url('/WEX040/dataUpdate', false)."');" . 
+							"initPopUp('".Router::url('/WEX012/popup', false)."');" .
+							"initAddRow('".Router::url('/WEX012/popup_insert', false)."');" .
+							"initUpdate('".Router::url('/WEX012/dataUpdate', false)."');" .
 							"initBunrui();");
-		
-		$bnri_dai_cd = '';
 
-		$kotei = '';
-		$bnri_cyu_cd = '';
-		$bnri_cyu_nm = '';
-		$bnri_cyu_exp = '';
+		$ninusi_cd = '';
+		$sosiki_cd = '';
+
+		$sosiki_nm = '';
+		$sosiki_ryaku = '';
 
 		$pageID = 1;
 		$return_cd = '';
@@ -96,155 +91,145 @@ class WEX040Controller extends AppController {
 		$message = '';
 
 		//パラメータ　検索条件を取得
-		if (isset($this->request->query['bnri_cyu_cd'])){
-			$kotei = $this->request->query['kotei'];
-			$bnri_cyu_cd = $this->request->query['bnri_cyu_cd'];
-			$bnri_cyu_nm = $this->request->query['bnri_cyu_nm'];
-			$bnri_cyu_exp = $this->request->query['bnri_cyu_exp'];
+		if (isset($this->request->query['ninusi_cd'])){
+			$bnri_sai_cd = $this->request->query['ninusi_cd'];
+		}
+		if (isset($this->request->query['sosiki_cd'])){
+			$bnri_sai_cd = $this->request->query['sosiki_cd'];
+		}
+		if (isset($this->request->query['sosiki_nm'])){
+			$bnri_sai_cd = $this->request->query['sosiki_nm'];
+		}
+		if (isset($this->request->query['sosiki_ryaku'])){
+			$bnri_sai_cd = $this->request->query['sosiki_ryaku'];
 		}
 
 		//POST時
 		if(isset($this->request->query['pageID'])) {
-				
 			$pageID = $this->request->query['pageID'];
 		}
-		
+
 		//リターンCD
 		if(isset($this->request->query['return_cd'])) {
-				
 			$return_cd = $this->request->query['return_cd'];
 		}
-		
+
 		//メッセージ
 		if(isset($this->request->query['message'])) {
-				
 			$message = $this->MCommon->escapePHP($this->request->query['message']);
 		}
 
 		//エラーコード
 		if(isset($this->request->query['display'])) {
-				
 			$display = $this->request->query['display'];
 		}
-		
+
 		//メッセージとリターンコードを出すか判断
 		if (isset($this->request->query['display']) && $display == "true") {
-			
-			$this->Session->write('displayWEX040','true');
-			
-			$this->redirect('/WEX040/index?return_cd=' . $return_cd . 
+
+			$this->Session->write('displayWEX012','true');
+
+			$this->redirect('/WEX012/index?return_cd=' . $return_cd .
 										  '&message=' . $message .
-										  '&kotei=' . $kotei . 
-										  '&bnri_cyu_cd=' . $bnri_cyu_cd . 
-										  '&bnri_cyu_nm=' . $bnri_cyu_nm . 
-										  '&bnri_cyu_exp=' . $bnri_cyu_exp. 
+										  '&ninusi_cd=' . $ninusi_cd .
+										  '&sosiki_cd=' . $sosiki_cd .
+										  '&sosiki_nm=' . $sosiki_nm .
+										  '&sosiki_ryaku=' . $sosiki_ryaku .
 										  '&pageID=' . $pageID .
 										  '&display=false'
 										  );
-			
+
 			return;
-		} else if ($this->Session->check('displayWEX040') && $display == "false") {
-			
-			$this->Session->delete('displayWEX040');
-			
-		} else if (!$this->Session->check('displayWEX040') && $display == "false") {
-			
-			$this->redirect('/WEX040/index?&kotei=' . $kotei . 
-										  '&bnri_cyu_cd=' . $bnri_cyu_cd . 
-										  '&bnri_cyu_nm=' . $bnri_cyu_nm . 
-										  '&bnri_cyu_exp=' . $bnri_cyu_exp. 
+		} else if ($this->Session->check('displayWEX012') && $display == "false") {
+
+			$this->Session->delete('displayWEX012');
+
+		} else if (!$this->Session->check('displayWEX012') && $display == "false") {
+
+			$this->redirect('/WEX012/index?&ninusi_cd=' . $ninusi_cd .
+										  '&sosiki_cd=' . $sosiki_cd .
+										  '&sosiki_nm=' . $sosiki_nm .
 										  '&pageID=' . $pageID
 										  );
 			return;
 		}
 
-		$bnri_dai_cd = substr($kotei, 0,3);
 
-		//中分類マスタ一覧
-		$lsts = $this->WEX040Model->getMBnriCyuLst($bnri_dai_cd, $bnri_cyu_cd, $bnri_cyu_nm, $bnri_cyu_exp);
+		//組織マスタ一覧
+		$lsts = $this->WEX012Model->getMSosikiLst($ninusi_cd, $sosiki_cd, $sosiki_nm, $sosiki_ryaku);
 
 		//ページャー
 		$pageNum = 50;
-		
+
 		$options = array(
 				"totalItems" => count($lsts),
 				"delta" => 10,
 				"perPage" => $pageNum,
 				"httpMethod" => "GET",
-				"path" => "/DCMS/WEX040/index"
+				"path" => "/DCMS/WEX012/index"
 		);
 
-		
+
 		$pager = @Pager::factory($options);
-		
+
 		//ナビゲーションを設定
 		$navi = $pager -> getLinks();
 		$this->set('navi',$navi["all"]);
-		
+
 		//インデックスを取得
 		$index = ($pageID - 1) * $pageNum;
 		$arrayList = array();
-		
+
 		$limit = $index + $pageNum;
-		
+
 		if ($limit > count($lsts)) {
-				
+
 			$limit = count($lsts);
 		}
-		
+
 		for($i = $index; $i < $limit ; $i++){
 			$arrayList[] = $lsts[$i];
 		}
 
-		//分類コンボ設定
-	    
-	    //大に分ける
-	    $opsions = $this->MBunrui->getBunruiDaiPDO();
-	    $this->set("koteiDaiList",$opsions);
-
-		//売上区分
-		$kbnUriages = $this->MMeisyo->getMeisyo("11");
+		//荷主マスタ
+		$mninusi = $this->WEX012Model->getMNinusi();
 		// 一覧情報を一時的にセッションに保持
-		$this->set('kbnUriages', $kbnUriages);
-
-		//単位区分
-		$kbnTanis = $this->MMeisyo->getMeisyo(Configure::read('mei_kbn.tani'));
-		// 一覧情報を一時的にセッションに保持
-		$this->set('kbnTanis', $kbnTanis);
+		$this->set('mninusi', $mninusi);
 
 		//Viewへセット
 		$this->set('index',$index);
 
-			
+
 		//エラーの場合
-		if ($this->Session->check('saveTableWEX040')) {
-		
+		if ($this->Session->check('saveTableWEX012')) {
+
 			//データを取得
-			$getArray = $this->Session->read('saveTableWEX040');
-			
+			$getArray = $this->Session->read('saveTableWEX012');
+
 			$data = $getArray->data;
 			$timestamp = $getArray->timestamp;
-			
+
 			$this->set("timestamp", $timestamp);
 			$this->set('lsts',$data);
 			$this->render("index_error");
-			
-			$this->Session->delete('saveTableWEX040');
-		
+
+			$this->Session->delete('saveTableWEX012');
+
 		//エラー以外で条件付きの場合
 		} else {
-			
+
 			/* タイムスタムプ取得 */
 			$this->set("timestamp", $this->MCommon->getTimestamp());
 			$this->set('lsts',$arrayList);
 		}
-		
+
+
 	}
 
 
 	/**
 	 * DB更新処理
-	 * 
+	 *
 	 * @access   public
 	 * @param    void
 	 * @return   void
@@ -252,12 +237,12 @@ class WEX040Controller extends AppController {
 	public function dataUpdate() {
 
 
-		
+
 		$this->autoLayout = false;
 		$this->autoRender = false;
 
 		if(!$this->request->is('post')) {
-			
+
 			echo "return_cd=" . "1" . "&message=" .  base64_encode ($this->MMessage->getOneMessage('CMNE000104'));
 			return;
 		}
@@ -268,147 +253,126 @@ class WEX040Controller extends AppController {
 		$getArray = json_decode($this->request->input());
 
 		if(count($getArray) == 0) {
-			
+
 			echo "return_cd=" . "90" . "&message=" .  base64_encode ($this->MMessage->getOneMessage('CMNE000101'));
 			return;
 		}
 
 
 		//データを一時保存
-		$this->Session->write('saveTableWEX040',$getArray);
+		$this->Session->write('saveTableWEX012',$getArray);
 
 		$data = $getArray->data;
 		$timestamp = $getArray->timestamp;
-		
+
 		//タイムスタンプチェック
-		if (!$this->WEX040Model->checkTimestamp($timestamp)) {
-			
-			$array = $this->WEX040Model->errors;
+		if (!$this->WEX012Model->checkTimestamp($timestamp)) {
+
+			$array = $this->WEX012Model->errors;
 		    $message = '';
-		    
+
 		    foreach ( $array as $key=>$val ) {
-		    
+
 		    	foreach ($val as $key2=>$val2) {
-			    
+
 			    	$message = $message . $val2 . "<br>";
 		    	}
 		    }
-		    
+
 		    echo "return_cd=" . "1" . "&message=" .  base64_encode ($message);
 		    return;
 		}
 
 		//必須チェック
-//		if (!$this->WEX040Model->checkCYUMst($data)) {
-		$abc = $this->WEX040Model->checkCyuMst($data);
-			
-		$array = $this->WEX040Model->errors;
+		$abc = $this->WEX012Model->checkSosikiMst($data);
+
+		$array = $this->WEX050Model->errors;
 
 		if (!empty($array)) {
 
 		    $message = '';
-		    
+
 		    foreach ( $array as $key=>$val ) {
-		    
+
 		    	foreach ($val as $key2=>$val2) {
-			    
+
 			    	$message = $message . $val2 . "<br>";
 		    	}
 		    }
-		    
+
 		    echo "return_cd=" . "1" . "&message=" .  base64_encode ($message);
 		    return;
 
 		}
 
 		//更新処理
-		if (!$this->WEX040Model->setCyuMst($data, $this->Session->read('staff_cd'))) {
-		    
-		    
-		    $array = $this->WEX040Model->errors;
+		if (!$this->WEX012Model->setSosikiMst($data, $this->Session->read('staff_cd'))) {
+
+
+		    $array = $this->WEX012Model->errors;
 		    $message = '';
-		    
+
 		    foreach ( $array as $key=>$val ) {
-		    
+
 		    	foreach ($val as $key2=>$val2) {
-			    
-			    	$message = $message . $val2 . "<br>";	
+
+			    	$message = $message . $val2 . "<br>";
 		    	}
 		    }
-		    
+
 		    echo "return_cd=" . "1" . "&message=" .  base64_encode ($message) ;
 		    return;
 		}
-		
+
+
 		//成功なのでテーブルをセッションから消す
-		$this->Session->delete('saveTableWEX040');
+		$this->Session->delete('saveTableWEX012');
 
 
-		
+
 		echo "return_cd=" . "0" . "&message=" .  base64_encode ($this->MMessage->getOneMessage('CMNI000001'));
 
 	}
-	
-	
+
+
 
 
 	/**
 	 * ポップアップ取得
-	 * 
+	 *
 	 * @access   public
 	 * @param    void
 	 * @return   void
 	 */
 	public function popup() {
-	
+
 		$this->autoLayout = false;
-				
-		// 名称マスタ取得
-		//単位区分
-		$kbnTanis = $this->MMeisyo->getMeisyo(Configure::read('mei_kbn.tani'));
-		// 一覧情報を一時的にセッションに保持
-		$this->set('kbnTanis', $kbnTanis);
-		//売上区分
-		$kbnUriages = $this->MMeisyo->getMeisyo("11");
-		// 一覧情報を一時的にセッションに保持
-		$this->set('kbnUriages', $kbnUriages);
 
-//		//大分類コード
-//		$bnriDaiCd = $this->WEX040Model->getMBnriDaiCd();
-//		// 一覧情報を一時的にセッションに保持
-//		$this->set('bnriDaiCd', $bnriDaiCd);
+		//荷主マスタ
+		$mninusi = $this->WEX012Model->getMNinusi();
+		// 一覧情報を一時的にセッションに保持
+		$this->set('mninusi', $mninusi);
 
-	}	
+	}
 
 
 	/**
 	 * ポップアップ取得
-	 * 
+	 *
 	 * @access   public
 	 * @param    void
 	 * @return   void
 	 */
 	public function popup_insert() {
-	
+
 		$this->autoLayout = false;
-				
-		// 名称マスタ取得
-		//単位区分
-		$kbnTanis = $this->MMeisyo->getMeisyo(Configure::read('mei_kbn.tani'));
-		// 一覧情報を一時的にセッションに保持
-		$this->set('kbnTanis', $kbnTanis);
-		//売上区分
-		$kbnUriages = $this->MMeisyo->getMeisyo("11");
-		// 一覧情報を一時的にセッションに保持
-		$this->set('kbnUriages', $kbnUriages);
 
-		//分類コンボ設定
-	    
-	    //大に分ける
-	    $opsions = $this->MBunrui->getBunruiDaiPDO();
-	    $this->set("koteiDaiList",$opsions);
+		//荷主マスタ
+		$mninusi = $this->WEX012Model->getMNinusi();
+		// 一覧情報を一時的にセッションに保持
+		$this->set('mninusi', $mninusi);
 
-	}	
+	}
 
 
 }
