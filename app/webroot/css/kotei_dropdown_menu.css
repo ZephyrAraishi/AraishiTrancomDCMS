@@ -1,0 +1,109 @@
+@charset "utf-8";
+
+/* メニューここから */
+#kotei_dropdown_menu_div ul {
+	color: #ffffff;
+    list-style-type: none;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+}
+#kotei_dropdown_menu_div ul ul {
+    left: 0;
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+#kotei_dropdown_menu_div ul ul ul {
+    left: 100%;
+    top: 0;
+}
+#kotei_dropdown_menu_div li {
+    float: left;
+    clear: both;
+    height:24px;
+    padding-top:1px;
+}
+#kotei_dropdown_menu_div li li {
+    clear: both;
+}
+#kotei_dropdown_menu_div li li li {
+    clear: both;
+}
+#kotei_dropdown_menu_div li {
+    background: repeat scroll 0 0 #777777;
+    border:1px solid; 
+    border-color:#666666 #666666 #666666 #666666;
+    line-height: 1.6em;
+    text-align: left;
+}
+#kotei_dropdown_menu_div li li {
+    text-align: left;
+    background: repeat scroll 0 0 #777777;
+    border:1px solid;
+    border-color:#666666 #666666 #666666 #666666;
+    line-height: 1.6em;
+}
+#kotei_dropdown_menu_div li+li {
+    text-align: left;
+    background: repeat scroll 0 0 #777777;
+    border-top:0px;
+}
+#kotei_dropdown_menu_div li:hover {
+	color: #ffffff;
+	background: repeat scroll 0 0 #999999;
+}
+
+/* 工程ポップアップ */
+#popupKoteiArea ul {
+	color: #ffffff;
+    list-style-type: none;
+    position: absolute;
+    margin: 0;
+    padding: 0;
+}
+#popupKoteiArea ul ul {
+    left: 0;
+    position: absolute;
+    left: 100%;
+    top: 0;
+}
+#popupKoteiArea ul ul ul {
+    left: 100%;
+    top: 0;
+}
+#popupKoteiArea li {
+    float: left;
+    clear: both;
+    height:24px;
+    padding-top:1px;
+}
+#popupKoteiArea li li {
+    clear: both;
+}
+#popupKoteiArea li li li {
+    clear: both;
+}
+#popupKoteiArea li {
+    background: repeat scroll 0 0 #777777;
+    border:1px solid; 
+    border-color:#666666 #666666 #666666 #666666;
+    line-height: 1.6em;
+    text-align: left;
+}
+#popupKoteiArea li li {
+    text-align: left;
+    background: repeat scroll 0 0 #777777;
+    border:1px solid;
+    border-color:#666666 #666666 #666666 #666666;
+    line-height: 1.6em;
+}
+#popupKoteiArea li+li {
+    text-align: left;
+    background: repeat scroll 0 0 #777777;
+    border-top:0px;
+}
+#popupKoteiArea li:hover {
+	color: #ffffff;
+	background: repeat scroll 0 0 #999999;
+}

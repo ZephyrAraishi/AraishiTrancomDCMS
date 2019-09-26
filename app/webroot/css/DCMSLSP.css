@@ -1,0 +1,86 @@
+﻿@charset "utf-8";
+
+/*----------------- マスタ画面 ----------------------*/
+
+div.btnsubmit {
+	position:relative;
+	text-align: right;
+	width:150px;
+	float:left;
+
+}
+
+div#reloadingMessage {
+	display: block;
+	position: relative;
+	text-align: right;
+	color: red;
+}
+
+/*----------------- LSP予測シュミレーション画面 ----------------------*/
+table.glst{
+    border-collapse:collapse;
+    border-spacing:0;
+    background-color:#ffffff;
+    empty-cells:show;
+    text-align:center;
+}
+.glst th{
+    border-top:1px solid #666666;
+    border-right:1px solid #666666;
+    border-left:1px solid #666666;
+    border-bottom:1px solid #666666;
+    color:#ffffff;
+    background-color:#777777;
+    background-position:left top;
+    padding:0px;
+    text-align:center;
+    font-size: 10pt;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.glst td {
+    padding:0px;
+    font-size: 10pt;
+}
+.glst_t {
+    color:#ffffff;
+    background-color:#777777;
+    background-position:left top;
+    padding:0px;
+    text-align:center;
+    font-size: 10pt;
+    margin-top: 2px;
+}
+.gtd {
+    background-color : #ffffff;
+    padding:0px;
+    margin:0px;
+    border-right:none 0px #ffffff;
+    border-left:none 0px #ffffff;
+}
+.barY {
+    background-color : #5bace5;
+    display:block;
+    line-height: 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.barJ {
+    background-color : #a5ff4c;
+    display:block;
+    line-height: 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+.barN {
+    background-color : #ffffff;
+    display:block;
+    line-height: 10px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+}
+
+.tableCol{
+	text-align:right;
+}

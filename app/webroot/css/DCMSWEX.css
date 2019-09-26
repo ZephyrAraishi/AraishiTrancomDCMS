@@ -1,0 +1,89 @@
+﻿@charset "utf-8";
+/*----------------- 荷主基本情報画面 ----------------------*/
+
+.row6col6{
+    height: 7em;
+	width:350px;
+	font-size: 10pt;
+}
+
+/* 改行なし */
+div.inline{
+    display:inline-block;
+    _display:inline;
+    margin-right: 0.3em;
+}
+
+
+/*----------------- マスタ画面 ----------------------*/
+
+div.btnsubmit {
+	position:relative;
+	text-align: right;
+	width:150px;
+	float:left;
+
+}
+
+div#reloadingMessage {
+	display: block;
+	position: relative;
+	text-align: right;
+	color: red;
+}
+
+/*----------------- 月別推移、日別遷移画面 ----------------------*/
+
+table#kaizen{
+    margin-top:2px;
+    margin-bottom:2px;
+    width:1200px;
+}
+.kaizen tr {
+	height:30px;
+}
+.kaizen td {
+    font-size: 10pt;
+    text-align: left;
+}
+.kaizen textarea {
+    resize: none;
+    font-size: 10pt;
+    color : #000000;
+    width:1080px;
+    border :1px solid #555;
+    backgroundcolor:white;
+}
+.kaizen textarea:disabled {
+    background-color: #ffffff;
+}
+div.underline {
+	width:95%;
+	height:1px;
+	background-color:#555;
+	overflow:hidden;
+}
+
+/*----------------- 改善DB画面 ----------------------*/
+
+div.kaizen_box {
+    border-top:1px solid #666666;
+    border-left:1px solid #666666;
+    border-right:1px solid #666666;
+    border-bottom:1px solid #666666;
+    border-collapse:collapse;
+    border-spacing:0;
+    background-color:#ffffff;
+    padding-top:20px;
+    padding-left:20px;
+    margin-bottom: 20px;
+    height: 90px;
+    text-align: left;
+}
+
+
+table#kaizen_input {
+}
+.kaizen_input td {
+    text-align: left;
+}

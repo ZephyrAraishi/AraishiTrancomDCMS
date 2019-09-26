@@ -1,0 +1,504 @@
+@charset "utf-8";
+
+/*-------------------- 全体進捗① -------------------------*/
+
+/* グラフ用 */
+.graphArea {
+	display:block;
+	position:static;
+	width:1450px;
+	height: 50px;
+	top:0px;
+	left:0px;
+}
+
+.graphMoji {
+	display:block;
+	position:static;
+	width:150px;
+	height:35px;
+	top:0px;
+	left:0px;
+	padding-top:6px;
+	padding-left:4px;
+	font-weight: bold;
+	font-size: 16px;
+	float: left;
+}
+
+.graph {
+	display:block;
+	position:static;
+	width:1200px;
+	height:23px;
+	margin-top: 5px;
+	border: 1px solid black;
+	float: left;
+}
+
+.graphAmount {
+	display:block;
+	position:static;
+	height:100%;
+}
+
+.graphMajor {
+	display:block;
+	position:static;
+	width:1200px;
+	height:8px;
+	margin-left: 146px;
+	font-size: 8pt;
+	float:left;
+}
+
+.graphNumArea {
+	display:block;
+	position:static;
+	width:80px;
+	height:35px;
+	top:0px;
+	left:0px;
+	font-size:10px;
+	text-align: center;
+	float: left;
+}
+
+/* 全体進捗グラフ */
+#shinchokuGraph {
+	display: block;
+	position: relative;
+	margin-bottom: 20px;
+	height: 100px;
+}
+.sorterTable{
+	display: block;
+	position: relative;
+}
+
+.sorterArea {
+	display: block;
+	position: relative;
+	width: 446px;
+	float: left;
+	border: 1px solid black;
+	padding: 20px;
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.sorterTitle {
+	display: block;
+	position: relative;
+	font-size: 20px;
+	font-weight: bold;
+}
+
+/*-------------------- 全体進捗② -------------------------*/
+
+/* テーブルグループ */
+
+.tableBlock {
+	display: block;
+	position: relative;
+	width: 100%;
+	margin-bottom: 20px;
+	float:left;
+}
+
+.tableBlock table {
+	display: block;
+	position:relative;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	float: left;
+}
+
+.lineTitle {
+	display:block;
+	position:relative;
+	float:left;
+	width:100%;
+	font-weight:bold;
+	font-size: 16px;
+}
+
+.lineTitleSeparate {
+	display:block;
+	position:relative;
+	float:left;
+	width:50%;
+	font-weight:bold;
+	font-size: 16px;
+}
+
+.jikanList {
+	display:block;
+	position:relative;
+	float:left;
+	width:371px;
+	margin-bottom:20px;
+}
+
+.sorterList {
+	display:block;
+	position:relative;
+	float:left;
+	width:411px;
+	margin-bottom:20px;
+	margin-right:20px;
+}
+
+.tanaketsuLst {
+	display:block;
+	position:relative;
+	float:left;
+	width:411px;
+	margin-bottom:10px;
+	margin-left:2px;
+}
+
+/*-------------------- 優先変更 -------------------------*/
+
+div#Attention {
+	display:block;
+	position:absolute;
+	height:30px;
+	font-size:20px;
+	font-weight:bold;
+	color:red;
+}
+
+div#yusenSorterTitleArea1 {
+	display:block;
+	position:relative;
+	height:60px;
+	border-bottom:1px solid gray;
+}
+
+div#yusenSorterTitleArea2 {
+	display:block;
+	position:relative;
+	height:70px;
+	margin-bottom:10px;
+}
+
+div.yusenSorterTitle {
+	display:block;
+	position:absolute;
+	font-size:20px;
+	font-weight:bold;
+	color:gray;
+}
+
+div.yusenSorterTitle2 {
+	display:block;
+	position:absolute;
+	width:330px;
+}
+
+div#panelArea {
+    display: block;	
+	position: relative;
+	margin-left: auto;
+	margin-right: auto;
+	text-align: left;
+	width:1280px;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+div.panel {
+	display:block;
+	position:absolute;
+	width:30px;
+	height:130px;
+}
+
+div.panelBase {
+	display:block;
+	position:relative;
+	width:300px;
+	height:130px;
+}
+
+div.hiddenData {
+	display: none;
+}
+
+div.overlay {
+	background-color: black;
+	filter:alpha(opacity=30);
+	-moz-opacity: 0.3;
+	opacity: 0.3;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+div.dontMove {
+	background: black;
+	filter:alpha(opacity=60);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+div.markSpace {
+	background-color: gray;
+	filter:alpha(opacity=30);
+	-moz-opacity: 0.3;
+	opacity: 0.3;
+}
+
+div.panelTOP_PRIORITY_FLG {
+	display: block;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 10px;
+	height: 138px;
+}
+
+div.TOP_PRIORITY_FLG_SELECTED {
+	background: red;
+}
+
+div.panelS_BATCH_NO {
+	display: block;
+	position: absolute;
+	font-size: 55px;
+	top: 61px;
+	left: 60px;
+	width: 160px;
+	height: 73px;
+	text-align: center;
+	padding-top: 4px;
+	line-height: 73px;
+	border-right: 1px dashed gray;
+	font-weight: bold;
+}
+
+div.panelYMD_SYORI {
+	display: block;
+	position: absolute;
+	font-size: 16px;
+	top: 61px;
+	left: 0px;
+	width: 50px;
+	height: 35px;
+	text-align: center;
+	padding-top: 4px;
+	line-height: 35px;
+	padding-left:10px;
+	border-right: 1px dashed gray;
+	border-bottom: 1px dashed gray;
+	font-weight: bold;
+}
+
+div.panelSURYO_SHOOT {
+	display: block;
+	position: absolute;
+	font-size: 18px;
+	top: 96px;
+	left: 0px;
+	width: 50px;
+	height: 37px;
+	text-align: center;
+	padding-top: 4px;
+	padding-left: 10px;
+	line-height: 37px;
+	border-right: 1px dashed gray;
+	font-weight: bold;
+}
+
+div.panelS_BATCH_NM {
+	display: block;
+	position: absolute;
+	font-size: 35px;
+	top: 0px;
+	left: 0px;
+	width: 200px;
+	height: 60px;
+	overflow: hidden;
+	padding-left: 20px;
+	border-bottom: 1px dashed gray;
+	border-right: 1px dashed gray;
+	line-height: 30px;
+	font-weight: bold;
+}
+
+div.panelSURYO_PIECE {
+	display: block;
+	position: absolute;
+	font-size: 18px;
+	top: 0px;
+	left: 221px;
+	width: 60px;
+	height: 60px;
+	text-align: center;
+	border-bottom: 1px dashed gray;
+	line-height: 60px;
+	font-weight: bold;
+}
+
+div.panelPICKING_TIME {
+	display: block;
+	position: absolute;
+	font-size: 18px;
+	top: 61px;
+	left: 221px;
+	width: 60px;
+	height: 35px;
+	padding-top: 4px;
+	text-align: center;
+	border-bottom: 1px dashed gray;
+	line-height: 35px;
+	font-weight: bold;
+}
+
+div.panelSORTER_TIME {
+	display: block;
+	position: absolute;
+	font-size: 18px;
+	top: 96px;
+	left: 221px;
+	width: 60px;
+	height: 37px;
+	padding-top: 4px;
+	text-align: center;
+	line-height: 37px;
+	font-weight: bold;
+}
+
+div.panelKBN_BATCH_STATUS_NM {
+	display: block;
+	position: absolute;
+	font-size: 20px;
+	top: 0px;
+	left: 280px;
+	width: 28px;
+	text-align: center;
+	font-weight: bold;
+	word-wrap:break-word;
+	direction:ltr;
+}
+
+div.KBN_BATCH_STATUS_NM_SYORISUMI {
+	padding-top: 20px;
+	height: 118px;
+	background: #989898;
+	border-left: 1px dashed gray;
+}
+
+div.KBN_BATCH_STATUS_NM_SYORICYU {
+	padding-top: 20px;
+	height: 118px;
+	background: #b3e4ff;
+	border-left: 1px dashed gray;
+}
+
+div.KBN_BATCH_STATUS_NM_MISYORI {
+	padding-top: 40px;
+	height: 98px;
+	background: #ffff99;
+	border-left: 1px dashed gray;
+}
+
+div.panelCover {
+	display: block;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 308px;
+	height: 138px;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+div.panelCover2 {
+	display: block;
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	width: 308px;
+	height: 138px;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+div.panelAreaCover {
+	display: block;
+	position: absolute;
+	width: 100%;
+	top: 0px;
+	left : 0px;
+	background: black;
+	z-index: 1000;
+	filter:alpha(opacity=40);
+	-moz-opacity: 0.4;
+	opacity: 0.4;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+}
+
+div#reloadingMessage {
+	display: block;
+	position: relative;
+	text-align: right;
+	color: red;
+}
+
+div.SORTER_COVER {
+	display: block;
+	position: absolute;
+	filter:alpha(opacity=60);
+	-moz-opacity: 0.5;
+	opacity: 0.5;
+	-moz-user-select: none;
+	-khtml-user-select: none;
+	-webkit-user-select: none;
+	user-select: none;
+	cursor: default;
+	background: black;
+	z-index: 50;
+}
+
+div#sorter_cover1 {
+	top: 0px;
+	left: 0px;
+	width: 330px;
+}
+
+div#sorter_cover2 {
+	top: 0px;
+	left: 330px;
+	width: 330px;
+}
+
+div#sorter_cover3 {
+	top: 0px;
+	left: 660px;
+	width: 330px;
+}
+
+div#sorter_cover4 {
+	top: 0px;
+	left: 990px;
+	width: 330px;
+}

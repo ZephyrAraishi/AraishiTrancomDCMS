@@ -1,0 +1,123 @@
+@charset "utf-8";
+
+/*----------------- バッチ編成取込画面 ----------------------*/
+
+div.btnsubmit {
+	position:relative;
+	text-align: right;
+	width:150px;
+	float:left;
+
+}
+
+/*----------------- 出荷管理画面 ----------------------*/
+
+/* アップロードエリア */
+div#upload{
+	display: block;
+	position: relative;
+	margin-bottom: 20px;
+	height :38px;
+}
+
+div#reloadingMessage {
+	display: block;
+	position: relative;
+	text-align: right;
+	color: red;
+}
+
+/*----------------- ピッキング割振画面 ----------------------*/
+
+/* スタッフランクごとの割当エリア */
+div#staffRank{
+	display: block;
+	position: relative;
+	margin-bottom: 20px;
+}
+
+/* テーブルグループ */
+
+.tableBlock {
+	display: block;
+	position: relative;
+	width: 100%;
+	margin-bottom: 20px;
+	float:left;
+}
+
+.tableBlock table {
+	display: block;
+	position:relative;
+	margin-right: 20px;
+	margin-bottom: 20px;
+	float: left;
+}
+
+/*----------------- 棚欠品リスト出力----------------------*/
+div#upperSpacePrint {
+	display: block;
+	position: relative;
+	height: 0px;
+}
+
+div#pageBreak {
+	margin-top: 100px;
+}
+
+span#batNoCd {
+    font-size: 22pt;
+}
+
+span#zone {
+    font-size: 22pt;
+}
+
+span#locLeft {
+    font-size: 14pt;
+}
+span#locCenter {
+    font-size: 10pt;
+}
+span#locRight {
+    font-size: 10pt;
+}
+
+span#janLeft {
+    font-size: 10pt;
+}
+span#janRight {
+    font-size: 14pt;
+}
+
+td#itemNm {
+    font-size: 10pt;
+    text-align: left;
+}
+
+td#suryo {
+    font-size: 10pt;
+    text-align: right;
+}
+
+/*----------------- 工程管理 ----------------------*/
+
+#form_staff_nm {
+	width: 200px;
+}
+
+.hiddenDataKotei {
+	display: none;
+}
+
+.tableCellKotei {
+	display: block;
+	float: left;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	padding-left:5px;
+	padding-right:5px;
+	box-shadow: -1px 0px 0px 0px rgba(102,102,102,1.0) inset;
+	border-bottom: 1px solid #666666;
+}
