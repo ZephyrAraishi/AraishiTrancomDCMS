@@ -76,8 +76,7 @@ class WEX012Controller extends AppController {
 		$this->set("onload","initReload();".
 							"initPopUp('".Router::url('/WEX012/popup', false)."');" .
 							"initAddRow('".Router::url('/WEX012/popup_insert', false)."');" .
-							"initUpdate('".Router::url('/WEX012/dataUpdate', false)."');" .
-							"initBunrui();");
+							"initUpdate('".Router::url('/WEX012/dataUpdate', false)."');" );
 
 		$ninusi_cd = '';
 		$sosiki_cd = '';
@@ -91,17 +90,17 @@ class WEX012Controller extends AppController {
 		$message = '';
 
 		//パラメータ　検索条件を取得
-		if (isset($this->request->query['ninusi_cd'])){
-			$bnri_sai_cd = $this->request->query['ninusi_cd'];
+		if (isset($this->request->query['mninusi'])){
+			$ninusi_cd = $this->request->query['mninusi'];
 		}
 		if (isset($this->request->query['sosiki_cd'])){
-			$bnri_sai_cd = $this->request->query['sosiki_cd'];
+			$sosiki_cd = $this->request->query['sosiki_cd'];
 		}
 		if (isset($this->request->query['sosiki_nm'])){
-			$bnri_sai_cd = $this->request->query['sosiki_nm'];
+			$sosiki_nm = $this->request->query['sosiki_nm'];
 		}
 		if (isset($this->request->query['sosiki_ryaku'])){
-			$bnri_sai_cd = $this->request->query['sosiki_ryaku'];
+			$sosiki_ryaku = $this->request->query['sosiki_ryaku'];
 		}
 
 		//POST時
@@ -131,7 +130,7 @@ class WEX012Controller extends AppController {
 
 			$this->redirect('/WEX012/index?return_cd=' . $return_cd .
 										  '&message=' . $message .
-										  '&ninusi_cd=' . $ninusi_cd .
+										  '&mninusi=' . $ninusi_cd .
 										  '&sosiki_cd=' . $sosiki_cd .
 										  '&sosiki_nm=' . $sosiki_nm .
 										  '&sosiki_ryaku=' . $sosiki_ryaku .
@@ -146,7 +145,7 @@ class WEX012Controller extends AppController {
 
 		} else if (!$this->Session->check('displayWEX012') && $display == "false") {
 
-			$this->redirect('/WEX012/index?&ninusi_cd=' . $ninusi_cd .
+			$this->redirect('/WEX012/index?&mninusi=' . $ninusi_cd .
 										  '&sosiki_cd=' . $sosiki_cd .
 										  '&sosiki_nm=' . $sosiki_nm .
 										  '&pageID=' . $pageID
@@ -286,7 +285,7 @@ class WEX012Controller extends AppController {
 		//必須チェック
 		$abc = $this->WEX012Model->checkSosikiMst($data);
 
-		$array = $this->WEX050Model->errors;
+		$array = $this->WEX012Model->errors;
 
 		if (!empty($array)) {
 

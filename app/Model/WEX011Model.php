@@ -250,7 +250,7 @@ class WEX011Model extends DCMSAppModel{
 			$dataArray = $obj->data;
 
 			$CHANGED = $dataArray[1];
-			$BNRI_DAI_CD = $cellsArray[0];
+			$NINUSI_CD = $cellsArray[0];
 
 			// =================================================================
 			// キー重複チェック

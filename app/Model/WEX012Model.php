@@ -44,7 +44,7 @@ class WEX012Model extends DCMSAppModel{
 	 */
 	public function getMSosikiLst($ninusi_cd, $sosiki_cd,  $sosiki_nm, $sosiki_ryaku) {
 		/* ▼取得カラム設定 */
-		$fields = '*';
+		$fields = 'A.NINUSI_CD,B.NINUSI_NM,A.SOSIKI_CD,A.SOSIKI_NM,A.SOSIKI_RYAKU';
 
 		/* ▼検索条件設定 */
 
@@ -52,94 +52,38 @@ class WEX012Model extends DCMSAppModel{
 		$conditionKey = '';
 
 		/* ▼検索条件設定 */
-		$condition  = "NINUSI_CD       = :ninusi_cd";
-		$condition .= " AND SOSIKI_CD  = :sosiki_cd";
+		$condition  = "";
 
-		// 条件値指定
-		$conditionVal['ninusi_cd'] = $this->_ninusi_cd;
-		$conditionVal['sosiki_cd'] = $this->_sosiki_cd;
-
-
-		//大分類コード
-		if ($bnri_dai_cd != null){
-			$condition .= " AND BNRI_DAI_CD = :bnri_dai_cd " ;
-			$conditionVal['bnri_dai_cd'] = $bnri_dai_cd;
+		//荷主コード
+		if ($ninusi_cd != null){
+			$condition .= " AND A.NINUSI_CD = :ninusi_cd " ;
+			$conditionVal['ninusi_cd'] = $ninusi_cd;
 		}
-		//中分類コード
-		if ($bnri_cyu_cd != null){
-			$condition .= " AND BNRI_CYU_CD = :bnri_cyu_cd " ;
-			$conditionVal['bnri_cyu_cd'] = $bnri_cyu_cd;
+		//組織コード
+		if ($sosiki_cd != null){
+			$condition .= " AND A.SOSIKI_CD = :sosiki_cd " ;
+			$conditionVal['sosiki_cd'] = $sosiki_cd;
 		}
-		//細分類コード
-		if ($bnri_sai_cd != null){
-			$condition .= " AND BNRI_SAI_CD LIKE :bnri_sai_cd " ;
-			$conditionVal['bnri_sai_cd'] = $bnri_sai_cd . "%";
+		//組織名称
+		if ($sosiki_nm != null){
+			$condition .= " AND A.SOSIKI_NM LIKE :sosiki_nm " ;
+			$conditionVal['sosiki_nm'] = $sosiki_nm . "%";
 		}
-		//細分類名
-		if ($bnri_sai_nm != null){
-			$condition .= " AND ( BNRI_SAI_NM LIKE :bnri_sai_nm " ;
-			$conditionVal['bnri_sai_nm'] = "%" . $bnri_sai_nm . "%";
-
-			$condition .= " OR    BNRI_SAI_RYAKU LIKE :bnri_sai_ryaku ) " ;
-			$conditionVal['bnri_sai_ryaku'] = "%" . $bnri_sai_nm . "%";
-		}
-		//単位
-		if ($kbn_tani != null){
-			$condition .= " AND KBN_TANI = :kbn_tani " ;
-			$conditionVal['kbn_tani'] = $kbn_tani;
-		}
-		//活動目的
-		if ($kbn_ktd_mktk != null){
-			$condition .= " AND KBN_KTD_MKTK = :kbn_ktd_mktk " ;
-			$conditionVal['kbn_ktd_mktk'] = $kbn_ktd_mktk;
-		}
-		//必須作業
-		if ($kbn_hissu_wk != null){
-			$condition .= " AND KBN_HISSU_WK = :kbn_hissu_wk " ;
-			$conditionVal['kbn_hissu_wk'] = $kbn_hissu_wk;
-		}
-		//業務区分
-		if ($kbn_gyomu != null){
-			$condition .= " AND KBN_GYOMU = :kbn_gyomu " ;
-			$conditionVal['kbn_gyomu'] = $kbn_gyomu;
-		}
-		//データ取得区分
-		if ($kbn_get_data != null){
-			$condition .= " AND KBN_GET_DATA = :kbn_get_data " ;
-			$conditionVal['kbn_get_data'] = $kbn_get_data;
-		}
-		//付加価値性
-		if ($kbn_fukakachi != null){
-			$condition .= " AND KBN_FUKAKACHI = :kbn_fukakachi " ;
-			$conditionVal['kbn_fukakachi'] = $kbn_fukakachi;
-		}
-		//専門区分
-		if ($kbn_senmon != null){
-			$condition .= " AND KBN_SENMON = :kbn_senmon " ;
-			$conditionVal['kbn_senmon'] = $kbn_senmon;
-		}
-		//活動タイプ
-		if ($kbn_ktd_type != null){
-			$condition .= " AND KBN_KTD_TYPE = :kbn_ktd_type " ;
-			$conditionVal['kbn_ktd_type'] = $kbn_ktd_type;
-		}
-		//契約単位代表物量フラグ
-		if ($keiyaku_buturyo_flg != null){
-			$condition .= " AND KEIYAKU_BUTURYO_FLG = :keiyaku_buturyo_flg " ;
-			$conditionVal['keiyaku_buturyo_flg'] = $keiyaku_buturyo_flg;
+		//組織略称
+		if ($sosiki_ryaku != null){
+			$condition .= " AND ( A.SOSIKI_RYAKU LIKE :sosiki_ryaku " ;
+			$conditionVal['sosiki_ryaku'] = "%" . $soski_ryaku . "%";
 		}
 
-		/* ▼拠点情報取得 */
+		/* ▼組織情報取得 */
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
-		$sql .= 'FROM V_WEX050_M_BNRI_SAI_LST ';
-		$sql .= 'WHERE ';
+		$sql .= 'FROM M_NINUSI B LEFT JOIN M_SOSIKI A ON A.NINUSI_CD=B.NINUSI_CD ';
+		$sql .= 'WHERE 0=0';
 		$sql .= $condition;
 		$sql .= $conditionKey;
 		$sql .= " ORDER BY";
-		$sql .= "   BNRI_DAI_CD,";
-		$sql .= "   BNRI_CYU_CD,";
-		$sql .= "   BNRI_SAI_CD";
+		$sql .= "   A.NINUSI_CD,A.SOSIKI_CD";
 
 		$data = $this->query($sql, $conditionVal, false);
 		$data = self::editData($data);
@@ -148,7 +92,7 @@ class WEX012Model extends DCMSAppModel{
 	}
 
 	/**
-	 * 拠点情報編集処理
+	 * 組織情報編集処理
 	 * @access   public
 	 * @param    編集前情報
 	 * @return   編集後情報
@@ -168,7 +112,7 @@ class WEX012Model extends DCMSAppModel{
 	}
 
 
-	public function checkSaiMst($data) {
+	public function checkSosikiMst($data) {
 
 		//　入力チェック
 
@@ -182,25 +126,14 @@ class WEX012Model extends DCMSAppModel{
 			$cellsArray = $obj->cells;
 			$dataArray = $obj->data;
 
-			$BNRI_SAI_CD   = $cellsArray[2];
-			$BNRI_SAI_NM      = $cellsArray[3];
-			$BNRI_SAI_RYAKU   = $cellsArray[4];
-			$BNRI_SAI_EXP  = $cellsArray[5];
+			$NINUSI_CD   = $cellsArray[0];
+			$NINUSI_NM      = $cellsArray[1];
+			$SOSIKI_CD   = $cellsArray[2];
+			$SOSIKI_NM      = $cellsArray[3];
+			$SOSIKI_RYAKU   = $cellsArray[4];
 
 			$LINE_COUNT       = $dataArray[0];
 			$CHANGED          = $dataArray[1];
-			$BNRI_DAI_CD      = $dataArray[2];
-			$BNRI_CYU_CD      = $dataArray[3];
-			$KBN_TANI_CD      = $dataArray[4];
-			$KBN_KTD_MKTK_CD  = $dataArray[5];
-			$KBN_HISSU_WK_CD  = $dataArray[6];
-			$KBN_GYOMU_CD     = $dataArray[7];
-			$KBN_GET_DATA_CD  = $dataArray[8];
-			$KBN_FUKAKACHI_CD = $dataArray[9];
-			$KBN_SENMON_CD    = $dataArray[10];
-			$KBN_KTD_TYPE_CD  = $dataArray[11];
-			$KEIYAKU_BUTURYO_FLG  = $dataArray[12];
-
 
 			//更新対象件数取得
 			if ($CHANGED != '0'
@@ -213,54 +146,50 @@ class WEX012Model extends DCMSAppModel{
 			or  $CHANGED == '2') {
 
 				//必須チェック
-				if (empty($BNRI_DAI_CD)) {
-					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '大分類コード'));
+				if (empty($NINUSI_CD)) {
+					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '荷主コード'));
 					$this->errors['Check'][] =   $message;
 				}
-				if (empty($BNRI_CYU_CD)) {
-					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '中分類コード'));
+				if (empty($SOSIKI_CD)) {
+					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '組織コード'));
 					$this->errors['Check'][] =   $message;
 				}
-				if (empty($BNRI_SAI_CD)) {
-					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '細分類コード'));
+				if (empty($SOSIKI_NM)) {
+					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '組織名称'));
 					$this->errors['Check'][] =   $message;
 				}
-				if (empty($BNRI_SAI_NM)) {
-					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '細分類名称'));
-					$this->errors['Check'][] =   $message;
-				}
-				if (empty($BNRI_SAI_RYAKU)) {
-					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '細分類略称'));
+				if (empty($SOSIKI_RYAKU)) {
+					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '組織略称'));
 					$this->errors['Check'][] =   $message;
 				}
 
 				//桁数チェック
-				if (strlen($BNRI_SAI_CD) != 3) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE050002'), array($count, '細分類コード', '3'));
+				if (strlen($NINUSI_CD) != 10) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE050002'), array($count, '荷主コード', '10'));
 					$this->errors['Check'][] =   $message;
 				}
-				if (mb_strlen($BNRI_SAI_NM) > 20) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE050004'), array($count, '細分類名称', '20'));
+				if (strlen($SOSIKI_CD) != 10) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE050002'), array($count, '組織コード', '10'));
 					$this->errors['Check'][] =   $message;
 				}
-				if (mb_strlen($BNRI_SAI_RYAKU) > 6) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE050004'), array($count, '細分類略称', '6'));
+				if (mb_strlen($SOSIKI_NM) > 20) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE050004'), array($count, '組織名称', '20'));
 					$this->errors['Check'][] =   $message;
 				}
-				if (mb_strlen($BNRI_SAI_EXP) > 40) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE050004'), array($count, '細分類説明', '40'));
+				if (mb_strlen($SOSIKI_RYAKU) > 6) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE050004'), array($count, '組織略称', '6'));
 					$this->errors['Check'][] =   $message;
 				}
 
 				//数字チェック
-				if (!preg_match("/^[0-9]+$/",$BNRI_SAI_CD)) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE050003'), array($count, '細分類コード'));
+				if (!preg_match("/^[0-9]+$/",$SOSIKI_CD)) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE050003'), array($count, '組織コード'));
 					$this->errors['Check'][] =   $message;
 				}
 
 				//"000"は入力不可
-				if ($BNRI_SAI_CD == '000' ) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE050006'), array($count, '細分類コード', '001'));
+				if ($SOSIKI_CD == '0000000000' ) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE050006'), array($count, '組織コード', '001'));
 					$this->errors['Check'][] =   $message;
 				}
 
@@ -287,10 +216,12 @@ class WEX012Model extends DCMSAppModel{
 			$cellsArray = $obj->cells;
 			$dataArray = $obj->data;
 
+			$NINUSI_CD   = $cellsArray[0];
+			$NINUSI_NM      = $cellsArray[1];
+			$SOSIKI_CD   = $cellsArray[2];
+			$SOSIKI_NM      = $cellsArray[3];
+			$SOSIKI_RYAKU   = $cellsArray[4];
 			$CHANGED       = $dataArray[1];
-			$BNRI_DAI_CD   = $dataArray[2];
-			$BNRI_CYU_CD   = $dataArray[3];
-			$BNRI_SAI_CD   = $cellsArray[2];
 
 			// =================================================================
 			// キー重複チェック
@@ -305,9 +236,8 @@ class WEX012Model extends DCMSAppModel{
 				for ($i = 1; $i < $count2; $i++) {
 					$cellsArray2 = $data[$i]->cells;
 					$dataArray2 = $data[$i]->data;
-					if ($dataArray2[2] == $BNRI_DAI_CD
-							and $dataArray2[3] == $BNRI_CYU_CD
-							and $cellsArray2[2] == $BNRI_SAI_CD
+					if ($cellsArray2[0] == $NINUSI_CD
+							and $cellsArray2[2] == $SOSIKI_CD
 							and $dataArray2[1]  == '2') {
 						$count3++;
 					}
@@ -333,10 +263,12 @@ class WEX012Model extends DCMSAppModel{
 			$cellsArray = $obj->cells;
 			$dataArray = $obj->data;
 
+			$NINUSI_CD   = $cellsArray[0];
+			$NINUSI_NM      = $cellsArray[1];
+			$SOSIKI_CD   = $cellsArray[2];
+			$SOSIKI_NM      = $cellsArray[3];
+			$SOSIKI_RYAKU   = $cellsArray[4];
 			$CHANGED       = $dataArray[1];
-			$BNRI_DAI_CD   = $dataArray[2];
-			$BNRI_CYU_CD   = $dataArray[3];
-			$BNRI_SAI_CD   = $cellsArray[2];
 
 			// =================================================================
 			// キー重複チェック
@@ -346,7 +278,7 @@ class WEX012Model extends DCMSAppModel{
 			if ($CHANGED == '2') {
 
 				//親が存在するかチェック
-				$dataForCheck = $this->getMBnriCyuForCheck($BNRI_DAI_CD, $BNRI_CYU_CD);
+				$dataForCheck = $this->getMNinusiForCheck($NINUSI_CD);
 				if (empty($dataForCheck)) {
 					$message = vsprintf($this->MMessage->getOneMessage('WEXE050009'), array($count));
 					$this->errors['Check'][] =   $message;
@@ -354,7 +286,7 @@ class WEX012Model extends DCMSAppModel{
 				}
 
 				//データベースにチェック
-				$dataForCheck = $this->getMBnriSaiForCheck($BNRI_DAI_CD, $BNRI_CYU_CD, $BNRI_SAI_CD);
+				$dataForCheck = $this->getMSosikiForCheck($NINUSI_CD, $SOSIKI_CD);
 				if (!empty($dataForCheck)) {
 					$message = vsprintf($this->MMessage->getOneMessage('WEXE050005'), array($count, '細分類コード'));
 					$this->errors['Check'][] =   $message;
@@ -366,7 +298,7 @@ class WEX012Model extends DCMSAppModel{
 			if ($CHANGED == 1) {
 
 				//データベースにチェック
-				$dataForCheck = $this->getMBnriSaiForCheck($BNRI_DAI_CD, $BNRI_CYU_CD, $BNRI_SAI_CD);
+				$dataForCheck = $this->getMSosikiForCheck($NINUSI_CD, $SOSIKI_CD);
 				if (empty($dataForCheck)) {
 					$message = vsprintf($this->MMessage->getOneMessage('CMNE010008'), array($count));
 					$this->errors['Check'][] =   $message;
@@ -385,7 +317,7 @@ class WEX012Model extends DCMSAppModel{
 
 
 
-	public function setSaiMst($arrayList, $staff_cd) {
+	public function setSosikiMst($arrayList, $staff_cd) {
 
 		$pdo = null;
 		$pdo2 = null;
@@ -397,18 +329,16 @@ class WEX012Model extends DCMSAppModel{
 			$pdo = new PDO($this->db_dsn, $this->db_user_name, $this->db_user_password);
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-
-
 			$sql = "CALL P_SET_LOCK(";
 			$sql .= "'" . $staff_cd . "',";
 			$sql .= "'" . $this->_ninusi_cd . "',";
 			$sql .= "'" . $this->_sosiki_cd . "',";
 			$sql .= "'WEX',";
-			$sql .= "'050',";
+			$sql .= "'012',";
 			$sql .= "1";
 			$sql .= ")";
 
-			$this->execWithPDOLog($pdo,$sql,'WEX050 排他制御オン');
+			$this->execWithPDOLog($pdo,$sql,'WEX012 排他制御オン');
 
 			try {
 
@@ -425,29 +355,13 @@ class WEX012Model extends DCMSAppModel{
 					$cellsArray = $obj->cells;
 					$dataArray = $obj->data;
 
-					$BNRI_SAI_CD      = $cellsArray[2];
-					$BNRI_SAI_NM      = Sanitize::clean($cellsArray[3]);
-					$BNRI_SAI_RYAKU   = Sanitize::clean($cellsArray[4]);
-					$BNRI_SAI_EXP     = Sanitize::clean($cellsArray[5]);
+					$NINUSI_CD      = $cellsArray[0];
+					$SOSIKI_CD      = $cellsArray[2];
+					$SOSIKI_NM      = Sanitize::clean($cellsArray[3]);
+					$SOSIKI_RYAKU   = Sanitize::clean($cellsArray[4]);
 
 					$LINE_COUNT       = $dataArray[0];
 					$CHANGED          = $dataArray[1];
-					$BNRI_DAI_CD      = $dataArray[2];
-					$BNRI_CYU_CD      = $dataArray[3];
-					$KBN_TANI_CD      = $dataArray[4];
-					$KBN_KTD_MKTK_CD  = $dataArray[5];
-					$KBN_HISSU_WK_CD  = $dataArray[6];
-					$KBN_GYOMU_CD     = $dataArray[7];
-					$KBN_GET_DATA_CD  = $dataArray[8];
-					$KBN_FUKAKACHI_CD = $dataArray[9];
-					$KBN_SENMON_CD    = $dataArray[10];
-					$KBN_KTD_TYPE_CD  = $dataArray[11];
-					$KEIYAKU_BUTURYO_FLG  = $dataArray[12];
-					$BUTTON_SEQ = $dataArray[13];
-					$LIST_SEQ    = $dataArray[14];
-					$SYURYO_NASI_FLG  = $dataArray[15];
-					$KYORI_FLG  = $dataArray[16];
-
 
 					//　０：なし　　　　　　何もしない
 					//　１：　修正　　　　　UPDATE
@@ -460,165 +374,46 @@ class WEX012Model extends DCMSAppModel{
 					//更新の場合
 					if ($CHANGED == 1) {
 
-						//細分類マスタを更新する
-						$sql = "CALL P_WEX050_UPD_SAI_BNRI(";
-						$sql .= "'" . $this->_ninusi_cd . "',";
-						$sql .= "'" . $this->_sosiki_cd . "',";
-						$sql .= "'" . $staff_cd . "',";
-						$sql .= "'" . $BNRI_DAI_CD . "',";
-						$sql .= "'" . $BNRI_CYU_CD . "',";
-						$sql .= "'" . $BNRI_SAI_CD . "',";
-						$sql .= "'" . $BNRI_SAI_NM . "',";
-						$sql .= "'" . $BNRI_SAI_RYAKU . "',";
-						$sql .= "'" . $BNRI_SAI_EXP . "',";
-						$sql .= "'" . $KBN_TANI_CD . "',";
-						$sql .= "'" . $KBN_KTD_MKTK_CD . "',";
-						$sql .= "'" . $KBN_HISSU_WK_CD . "',";
-						$sql .= "'" . $KBN_GYOMU_CD . "',";
-						$sql .= "'" . $KBN_GET_DATA_CD . "',";
-						$sql .= "'" . $KBN_FUKAKACHI_CD . "',";
-						$sql .= "'" . $KBN_SENMON_CD . "',";
-						$sql .= "'" . $KBN_KTD_TYPE_CD . "',";
-						$sql .= "'" . $KEIYAKU_BUTURYO_FLG . "',";
+						//組織マスタを更新する
+						$sql = "CALL UPDATE M_SOSIKI SET";
+						$sql .= "SOSIKI_NM='" . $SOSIKI_NM . "',";
+						$sql .= ",SOSIKI_RYAKU='" . $SOSIKI_RYAKU . "'";
+						$sql .= ",MODIFIED=now()";
+						$sql .= ",MODIFIED_STAFF='" . $staff_cd . "'";
+						$sql .= " WHERE NINUSI_CD='" . $NINUSI_CD . "'";
+						$sql .= "   AND SOSIKI_CD='" . $SOSIKI_CD . "';";
 
-						if($BUTTON_SEQ != "") {
-							$sql .= "" . $BUTTON_SEQ . ",";
-						} else {
-							$sql .= "NULL,";
-						}
-
-						if($LIST_SEQ != "") {
-							$sql .= "" . $LIST_SEQ . ",";
-						} else {
-							$sql .= "NULL,";
-						}
-
-						if($SYURYO_NASI_FLG != "") {
-							$sql .= "" . $SYURYO_NASI_FLG . ",";
-						} else {
-							$sql .= "0,";
-						}
-
-						if($KYORI_FLG != "") {
-							$sql .= "" . $KYORI_FLG . ",";
-						} else {
-							$sql .= "NULL,";
-						}
-
-						$sql .= "@return_cd";
-						$sql .= ")";
-
-						$this->execWithPDOLog($pdo2,$sql, '細分類マスタ　更新');
-
-						$sql = "SELECT";
-						$sql .= " @return_cd";
-
-						$this->queryWithPDOLog($stmt,$pdo2,$sql, '細分類マスタ　更新');
-
-						$result = $stmt->fetch(PDO::FETCH_ASSOC);
-						$return_cd = $result["@return_cd"];
-
-						if ($return_cd == "1") {
-
-							throw new Exception('細分類マスタ　更新');
-						}
+						$this->execWithPDOLog($pdo2,$sql, '組織マスタ　更新');
 
 					//新規の場合
 					} else if ($CHANGED == 2) {
 
-						//細分類マスタを追加する
-						$sql = "CALL P_WEX050_INS_SAI_BNRI(";
-						$sql .= "'" . $this->_ninusi_cd . "',";
-						$sql .= "'" . $this->_sosiki_cd . "',";
+						//組織マスタを追加する
+						$sql = "CALL INSERT INTO M_SOSIKI(NINUSI_CD,SOSIKI_CD,SOSIKI_NM,SOSIKI_RYAKU,CREATED,CREATED_STAFF,MODIFIED,MODIFIED_STAFF) VALUES(";
+						$sql .= "'" . $NINUSI_CD . "',";
+						$sql .= "'" . $SOSIKI_CD . "',";
+						$sql .= "'" . $SOSIKI_NM . "',";
+						$sql .= "'" . $SOSIKI_RYAKU . "',";
+						$sql .= "now(),";
 						$sql .= "'" . $staff_cd . "',";
-						$sql .= "'" . $BNRI_DAI_CD . "',";
-						$sql .= "'" . $BNRI_CYU_CD . "',";
-						$sql .= "'" . $BNRI_SAI_CD . "',";
-						$sql .= "'" . $BNRI_SAI_NM . "',";
-						$sql .= "'" . $BNRI_SAI_RYAKU . "',";
-						$sql .= "'" . $BNRI_SAI_EXP . "',";
-						$sql .= "'" . $KBN_TANI_CD . "',";
-						$sql .= "'" . $KBN_KTD_MKTK_CD . "',";
-						$sql .= "'" . $KBN_HISSU_WK_CD . "',";
-						$sql .= "'" . $KBN_GYOMU_CD . "',";
-						$sql .= "'" . $KBN_GET_DATA_CD . "',";
-						$sql .= "'" . $KBN_FUKAKACHI_CD . "',";
-						$sql .= "'" . $KBN_SENMON_CD . "',";
-						$sql .= "'" . $KBN_KTD_TYPE_CD . "',";
-						$sql .= "'" . $KEIYAKU_BUTURYO_FLG . "',";
-
-						if($BUTTON_SEQ != "") {
-							$sql .= "" . $BUTTON_SEQ . ",";
-						} else {
-							$sql .= "NULL,";
-						}
-
-						if($LIST_SEQ != "") {
-							$sql .= "" . $LIST_SEQ . ",";
-						} else {
-							$sql .= "NULL,";
-						}
-
-						if($SYURYO_NASI_FLG != "") {
-							$sql .= "" . $SYURYO_NASI_FLG . ",";
-						} else {
-							$sql .= "0,";
-						}
-
-						if($KYORI_FLG != "") {
-							$sql .= "" . $KYORI_FLG . ",";
-						} else {
-							$sql .= "NULL,";
-						}
-
-						$sql .= "@return_cd";
+						$sql .= "now(),";
+						$sql .= "'" . $staff_cd . "'";
 						$sql .= ")";
 
-						$this->execWithPDOLog($pdo2,$sql, '細分類マスタ　追加');
-
-						$sql = "SELECT";
-						$sql .= " @return_cd";
-
-						$this->queryWithPDOLog($stmt,$pdo2,$sql, '細分類マスタ　追加');
-
-						$result = $stmt->fetch(PDO::FETCH_ASSOC);
-						$return_cd = $result["@return_cd"];
-						if ($return_cd == "1") {
-							throw new Exception('細分類マスタ　追加');
-						}
-
+						$this->execWithPDOLog($pdo2,$sql, '組織マスタ　追加');
 
 					//削除の場合
 					} else if ($CHANGED == 3 || $CHANGED == 4) {
 
-							if (!empty($BNRI_DAI_CD)
-							and !empty($BNRI_CYU_CD)
-							and !empty($BNRI_SAI_CD)) {
+							if (!empty($NINUSI_CD)
+							and !empty($SOSIKI_CD)) {
 
-								//細分類マスタを削除する
-								$sql = "CALL P_WEX050_DEL_SAI_BNRI(";
-								$sql .= "'" . $this->_ninusi_cd . "',";
-								$sql .= "'" . $this->_sosiki_cd . "',";
-								$sql .= "'" . $BNRI_DAI_CD . "',";
-								$sql .= "'" . $BNRI_CYU_CD . "',";
-								$sql .= "'" . $BNRI_SAI_CD . "',";
-								$sql .= "@return_cd";
-								$sql .= ")";
+								//組織マスタを削除する
+								$sql = "DELETE FROM M_SOSIKI ";
+								$sql .= " WHERE NINUSI_CD='" . $NINUNSI_CD . "',";
+								$sql .= "   AND SOSIKI_CD='" . $SOSIKI_CD . "',";
 
-								$this->execWithPDOLog($pdo2,$sql, '細分類マスタ　削除');
-
-								$sql = "SELECT";
-								$sql .= " @return_cd";
-
-								$this->queryWithPDOLog($stmt,$pdo2,$sql, '細分類マスタ　削除');
-
-								$result = $stmt->fetch(PDO::FETCH_ASSOC);
-								$return_cd = $result["@return_cd"];
-
-								if ($return_cd == "1") {
-
-									throw new Exception('細分類マスタ　削除');
-								}
+								$this->execWithPDOLog($pdo2,$sql, '組織マスタ　削除');
 
 							}
 
@@ -630,7 +425,7 @@ class WEX012Model extends DCMSAppModel{
 
 			} catch (Exception $e) {
 				$return_cd = "1";
-				$this->printLog("fatal", "例外発生", "WEX050", $e->getMessage());
+				$this->printLog("fatal", "例外発生", "WEX012", $e->getMessage());
 				$pdo2->rollBack();
 			}
 
@@ -642,11 +437,11 @@ class WEX012Model extends DCMSAppModel{
 			$sql .= "'" . $this->_ninusi_cd . "',";
 			$sql .= "'" . $this->_sosiki_cd . "',";
 			$sql .= "'WEX',";
-			$sql .= "'050',";
+			$sql .= "'012',";
 			$sql .= "0";
 			$sql .= ")";
 
-			$this->execWithPDOLog($pdo,$sql,'WEX050 排他制御オフ');
+			$this->execWithPDOLog($pdo,$sql,'WEX012 排他制御オフ');
 
 			$pdo = null;
 
@@ -658,23 +453,11 @@ class WEX012Model extends DCMSAppModel{
 				return false;
 			}
 
-			//更新後は、以下を必ず入れること
-			App::uses('MBunrui', 'Model');
-
-			$this->MBunrui = new MBunrui($this->_ninusi_cd,
-			                                     $this->_sosiki_cd,
-			                                     $this->name
-			                                     );
-
-			// 削除
-			$this->MBunrui->deleteMemcache();
-			//　ここまで
-
 			return true;
 
 		} catch (Exception $e) {
 
-			$this->printLog("fatal", "例外発生", "WEX050", $e->getMessage());
+			$this->printLog("fatal", "例外発生", "WEX012", $e->getMessage());
 			$pdo = null;
 
 		}
@@ -687,12 +470,12 @@ class WEX012Model extends DCMSAppModel{
 	}
 
 	/**
-	 * 中分類マスタ取得（チェック用）
+	 * 荷主マスタ取得（チェック用）
 	 */
-	public function getMBnriCyuForCheck($bnri_dai_cd, $bnri_cyu_cd) {
+	public function getMNinusiForCheck($ninusi_cd) {
 
 		/* ▼取得カラム設定 */
-		$fields = '*';
+		$fields = 'NINUSI_CD,NINUSI_NM';
 
 		/* ▼検索条件設定 */
 
@@ -700,28 +483,17 @@ class WEX012Model extends DCMSAppModel{
 		$conditionKey = '';
 
 		/* ▼検索条件設定 */
-		$condition  = "NINUSI_CD       = :ninusi_cd";
-		$condition .= " AND SOSIKI_CD  = :sosiki_cd";
+		$condition  = "";
+		$conditionVal['ninusi_cd'] = "";
 
-		// 条件値指定
-		$conditionVal['ninusi_cd'] = $this->_ninusi_cd;
-		$conditionVal['sosiki_cd'] = $this->_sosiki_cd;
+		//荷主コード
+		$condition .= " AND NINUSI_CD = :ninusi_cd " ;
+		$conditionVal['ninusi_cd'] = $ninusi_cd;
 
-
-		//大分類コード
-		$condition .= " AND BNRI_DAI_CD = :bnri_dai_cd " ;
-		$conditionVal['bnri_dai_cd'] = $bnri_dai_cd;
-
-		//中分類コード
-		$condition .= " AND BNRI_CYU_CD = :bnri_cyu_cd " ;
-		$conditionVal['bnri_cyu_cd'] = $bnri_cyu_cd;
-
-
-
-		/* ▼拠点情報取得 */
+		/* ▼荷主情報取得 */
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
-		$sql .= 'FROM M_BNRI_CYU ';
+		$sql .= 'FROM M_NINUSI ';
 		$sql .= 'WHERE ';
 		$sql .= $condition;
 		$sql .= $conditionKey;
@@ -734,9 +506,9 @@ class WEX012Model extends DCMSAppModel{
 	}
 
 	/**
-	 * 細分類マスタ取得（チェック用）
+	 * 組織マスタ取得（チェック用）
 	 */
-	public function getMBnriSaiForCheck($bnri_dai_cd, $bnri_cyu_cd, $bnri_sai_cd) {
+	public function getMSosikiForCheck($ninusi_cd, $sosiki_cd) {
 
 		/* ▼取得カラム設定 */
 		$fields = '*';
@@ -747,32 +519,22 @@ class WEX012Model extends DCMSAppModel{
 		$conditionKey = '';
 
 		/* ▼検索条件設定 */
-		$condition  = "NINUSI_CD       = :ninusi_cd";
-		$condition .= " AND SOSIKI_CD  = :sosiki_cd";
+		$condition  = "";
+		$conditionVal['ninusi_cd'] = "";
+		$conditionVal['sosiki_cd'] = "";
 
-		// 条件値指定
-		$conditionVal['ninusi_cd'] = $this->_ninusi_cd;
-		$conditionVal['sosiki_cd'] = $this->_sosiki_cd;
+		//荷主コード
+		$condition .= " AND NINUSI_CD = :ninusi_cd " ;
+		$conditionVal['ninusi_cd'] = $ninusi_cd;
 
-
-		//大分類コード
-		$condition .= " AND BNRI_DAI_CD = :bnri_dai_cd " ;
-		$conditionVal['bnri_dai_cd'] = $bnri_dai_cd;
-
-		//中分類コード
-		$condition .= " AND BNRI_CYU_CD = :bnri_cyu_cd " ;
-		$conditionVal['bnri_cyu_cd'] = $bnri_cyu_cd;
-
-		//細分類コード
-		$condition .= " AND BNRI_SAI_CD = :bnri_sai_cd " ;
-		$conditionVal['bnri_sai_cd'] = $bnri_sai_cd;
-
-
+		//組織コード
+		$condition .= " AND SOSIKI_CD = :sosiki_cd " ;
+		$conditionVal['sosiki_cd'] = $sosiki_cd;
 
 		/* ▼拠点情報取得 */
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
-		$sql .= 'FROM V_WEX050_M_BNRI_SAI_CHK ';
+		$sql .= 'FROM M_SOSIKI ';
 		$sql .= 'WHERE ';
 		$sql .= $condition;
 		$sql .= $conditionKey;
@@ -795,7 +557,7 @@ class WEX012Model extends DCMSAppModel{
 			$pdo = new PDO($this->db_dsn, $this->db_user_name, $this->db_user_password);
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			$sql = "CALL P_WEX050_GET_TIMESTAMP(";
+			$sql = "CALL P_WEX012_GET_TIMESTAMP(";
 			$sql .= "'" . $this->_ninusi_cd . "',";
 			$sql .= "'" . $this->_sosiki_cd . "',";
 			$sql .= "@timestamp";
@@ -832,7 +594,7 @@ class WEX012Model extends DCMSAppModel{
 
 		} catch (Exception $e){
 
-			$this->printLog("fatal", "例外発生", "WEX050", $e->getMessage());
+			$this->printLog("fatal", "例外発生", "WEX012", $e->getMessage());
 			$pdo = null;
 		    throw $e;
 		}
@@ -840,6 +602,26 @@ class WEX012Model extends DCMSAppModel{
 		$message = $this->MMessage->getOneMessage('CMNE000107');
 		$this->errors['Check'][] =  $message;
 		return false;
+	}
+
+	/**
+	 * 荷主マスタ取得（コンボボックス用）
+	 */
+	public function getMNinusi() {
+
+		/* ▼取得カラム設定 */
+		$fields = 'NINUSI_CD,NINUSI_NM';
+
+		/* ▼荷主情報取得 */
+		$sql  = 'SELECT ';
+		$sql .= "$fields ";
+		$sql .= 'FROM M_NINUSI ';
+
+		$data = $this->queryWithLog($sql, "", false);
+		$data = self::editData($data);
+
+		return $data;
+
 	}
 
 
