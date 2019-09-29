@@ -12,15 +12,15 @@ function initReload() {
 	if (get.length != 0) {
 
 		if (get["ninusi_cd"] != null) {
-			$("mninusiCombo").setValue(get["mninusi"]);
+			$("mninusiCombo").setValue(get["ninusi_cd"]);
 		}
 
 		if (get["sosiki_cd"] != null) {
-			$("WEX012ModelsosikiCd").setValue(get["sosiki_cd"]);
+			$("WEX012ModelSosikiCd").setValue(get["sosiki_cd"]);
 		}
 
 		if (get["sosiki_nm"] != null) {
-			$("WEX012ModelsosikiNm").setValue(decodeURI(get["sosiki_nm"]));
+			$("WEX012ModelSosikiNm").setValue(decodeURI(get["sosiki_nm"]));
 		}
 
 		if (get["return_cd"] != null) {
@@ -163,7 +163,6 @@ function onSuccessEvent(res) {
 	var ninusi_cd = '';
 	var sosiki_cd = '';
 	var sosiki_nm = '';
-	var sosiki_ryaku = '';
 
 	var pageID    = '1';
 
@@ -172,19 +171,15 @@ function onSuccessEvent(res) {
 	if (get.length != 0) {
 
 		if (get["ninusi_cd"] != null) {
-			bnri_sai_cd = get["ninusi_cd"];
+			ninusi_cd = get["ninusi_cd"];
 		}
 
 		if (get["sosiki_cd"] != null) {
-			bnri_sai_cd = get["sosiki_cd"];
+			sosiki_cd = get["sosiki_cd"];
 		}
 
 		if (get["sosiki_nm"] != null) {
-			bnri_sai_nm = get["sosiki_nm"];
-		}
-
-		if (get["sosiki_ryaku"] != null) {
-			bnri_sai_nm = get["sosiki_ryaku"];
+			sosiki = get["sosiki_nm"];
 		}
 
 	}

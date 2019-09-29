@@ -26,7 +26,7 @@
 			<tr>
 				<td>荷主</td>
 				<td class="colNinusiCd" style="text-align:left;">
-					<select name="mninusi"  id="mninusiCombo" style="width:200px">
+					<select name="ninusi_cd"  id="mninusiCombo" style="width:200px">
 						<option value=""></option>
 						<?php
 						foreach($mninusi as $value) :
@@ -53,7 +53,7 @@
 				<td colspan="1"></td>
 				<td>組織名称</td>
 				<td colspan="3" class="colSosikiNm" style="text-align:left;">
-						<?php echo $this->Form->input('bnri_sai_nm',
+						<?php echo $this->Form->input('sosiki_nm',
 												array('maxlength' => '20',
 													'label' => false,
 													'error' => false,
@@ -84,21 +84,21 @@
 <div class="resizable_s" id="lstTable">
 	<div class="tableRowTitle row_ttl_1" style="width:1575px;">
 		<div class="tableCellBango cell_ttl_1" style="width:60px;" ><?php echo Configure::read('Bango'); ?></div>
-		<div class="tableCell cell_ttl_1" style="width:100px;" >荷主コード</div>
-		<div class="tableCell cell_ttl_1" style="width:100px;" >荷主名称</div>
-		<div class="tableCell cell_ttl_1" style="width:50px;" >組織コード</div>
-		<div class="tableCell cell_ttl_1" style="width:200px;" >組織名称</div>
-		<div class="tableCell cell_ttl_1" style="width:100px;" >組織略称</div>
+		<div class="tableCell cell_ttl_1" style="width:150px;" >荷主コード</div>
+		<div class="tableCell cell_ttl_1" style="width:300px;" >荷主名称</div>
+		<div class="tableCell cell_ttl_1" style="width:150px;" >組織コード</div>
+		<div class="tableCell cell_ttl_1" style="width:300px;" >組織名称</div>
+		<div class="tableCell cell_ttl_1" style="width:150px;" >組織略称</div>
 	</div>
 <?php $count = 0; ?>
 <?php foreach ($lsts as $array): ?>
 	<div class="tableRow row_dat" style="width:1575px;">
 		<div class="tableCellBango cell_dat" style="width:60px;"><?php echo ($count + 1) + $index; ?></div>
-		<div class="tableCell cell_dat cd" style="width:100px;"><?php echo $array['NINUSI_CD'] ?></div>
-		<div class="tableCell cell_dat nm" style="width:100px;"><?php echo $array['NINUSI_NM'] ?></div>
-		<div class="tableCell cell_dat cd" style="width:50px;"><?php echo $array['SOSIKI_CD'] ?></div>
-		<div class="tableCell cell_dat nm" style="width:200px;"><?php echo $array['SOSIKI_NM'] ?></div>
-		<div class="tableCell cell_dat nm" style="width:100px;"><?php echo $array['SOSIKI_RYAKU'] ?></div>
+		<div class="tableCell cell_dat cd" style="width:150px;"><?php echo $array['NINUSI_CD'] ?></div>
+		<div class="tableCell cell_dat nm" style="width:300px;"><?php echo $array['NINUSI_NM'] ?></div>
+		<div class="tableCell cell_dat cd" style="width:150px;"><?php echo $array['SOSIKI_CD'] ?></div>
+		<div class="tableCell cell_dat nm" style="width:300px;"><?php echo $array['SOSIKI_NM'] ?></div>
+		<div class="tableCell cell_dat nm" style="width:150px;"><?php echo $array['SOSIKI_RYAKU'] ?></div>
 
 		<div class="hiddenData LINE_COUNT"><?php echo $count ?></div>
 		<div class="hiddenData CHANGED">0</div>

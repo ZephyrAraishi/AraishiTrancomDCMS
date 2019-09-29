@@ -1,4 +1,4 @@
-<div style= "position: relative; height: 295px; width: 100%; margin-top: 20px; margin-left: 20px;">
+<div style= "position: relative; height: 150px; width: 100%; margin-top: 20px; margin-left: 20px;">
   <table width="100%" class="field">
 	<colgroup width="150px">
 	<colgroup width="200px">
@@ -13,7 +13,7 @@
 		<td style="text-align:left;" >荷主コード：</td>
 		<td class="colNinusiCd" style="text-align:left;">
 			<?php echo $this->Form->input('ninusiCd',
-							array('style' => 'width:100px;',
+							array('style' => 'width:150px;',
 								'error' => false,
 								'label' => false,
 								'div' => false,
@@ -24,7 +24,7 @@
 		<td style="text-align:left;" >荷主名称：</td>
 		<td colspan="3" class="colNinusiCd" style="text-align:left;">
 			<?php echo $this->Form->input('ninusiNm',
-							array('style' => 'width:100px;',
+							array('style' => 'width:300px;',
 								'error' => false,
 								'label' => false,
 								'div' => false,
@@ -38,7 +38,7 @@
 		<td style="text-align:left;" >組織コード：</td>
 		<td colspan="5"  class="colSosikiCd" style="text-align:left;">
 			<?php echo $this->Form->input('sosikiCd',
-							array('style' => 'width:100px;',
+							array('style' => 'width:150px;',
 								'maxlength' => '10',
 								'error' => false,
 								'label' => false,
@@ -67,7 +67,7 @@
 	   <td style="text-align:left;" >組織略称：</td>
 	   <td colspan="5"  class="colSosikiCd" style="text-align:left;">
 	   		<?php echo $this->Form->input('sosikiRyaku',
-							array('style' => 'width:150px;',
+							array('style' => 'width:200px;',
 								'maxlength' => '6',
 								'error' => false,
 								'label' => false,

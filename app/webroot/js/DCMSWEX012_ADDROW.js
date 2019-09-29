@@ -63,7 +63,7 @@ function viewInsertPopUp(event) {
 					className: "alphacube",
 					title: "組織マスタ設定",
 					width:1000,
-					height:350,
+					height:200,
 					draggable: true,
 					destroyOnclose: true,
 					recenterAuto: false,
@@ -80,9 +80,6 @@ function viewInsertPopUp(event) {
 
 	popup.content.setStyle({overflow:"visible"});
 
-	//分類を設定
-	initBunruiPopup();
-
 	//ポップアップを保持
 	popUpView = popup
 
@@ -94,7 +91,7 @@ function clickOKButton2(window) {
 
 	//　入力チェック
 	//必須チェック
-	if (!DCMSValidation.notEmpty($F("mninusi"))) {
+	if (!DCMSValidation.notEmpty($F("mninusiCombo"))) {
 		alert(DCMSMessage.format("CMNE000001", "荷主"));
 		return;
 	}
@@ -161,28 +158,35 @@ function clickOKButton2(window) {
 	var tableCell = new Element("div");
 	tableCell.addClassName("tableCell cell_dat cd");
 	tableCell.setStyle({
-		width:"100px"
+		width:"150px"
 	});
 	tableRow.insert(tableCell);
 
 	var tableCell = new Element("div");
 	tableCell.addClassName("tableCell cell_dat nm");
 	tableCell.setStyle({
-		width:"100px"
+		width:"300px"
 	});
 	tableRow.insert(tableCell);
 
 	var tableCell = new Element("div");
 	tableCell.addClassName("tableCell cell_dat cd");
 	tableCell.setStyle({
-		width:"50px"
+		width:"150px"
+	});
+	tableRow.insert(tableCell);
+
+	var tableCell = new Element("div");
+	tableCell.addClassName("tableCell cell_dat nm");
+	tableCell.setStyle({
+		width:"300px"
 	});
 	tableRow.insert(tableCell);
 
 	tableCell = new Element("div");
 	tableCell.addClassName("tableCell cell_dat nm");
 	tableCell.setStyle({
-		width:"200px"
+		width:"150px"
 	});
 	tableRow.insert(tableCell);
 
@@ -208,19 +212,19 @@ function clickOKButton2(window) {
 
 	// テキスト値取得
 	// 　下、子Viewの中
-	var ninunsiCd = $F("mninusi");
+	var ninusiCd = $F("mninusiCombo");
 	// 荷主名称を取得
 	var ninusi_nm = "";
-	var options = $A($('mninusi').getElementsByTagName('option'));
+	var options = $A($('mninusiCombo').getElementsByTagName('option'));
 	options.each(function(option){
 		if (option.selected) {
 			ninusi_nm = option.innerHTML;
 		}
 	});
 	var ninusiNm = ninusi_nm;
-	var sosikiCd = $F("bnriSaiCd");
-	var sosikiNm = $F("bnriSaiNm");
-	var sosikiRyaku = $F("bnriSaiRyaku");
+	var sosikiCd = $F("sosikiCd");
+	var sosikiNm = $F("sosikiNm");
+	var sosikiRyaku = $F("sosikiRyaku");
 
 	//変更項目の処理
 	cells[0].innerHTML = ninusiCd;

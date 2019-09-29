@@ -1,4 +1,4 @@
-<div style= "position: relative; height: 295px; width: 100%; margin-top: 20px; margin-left: 20px;">
+<div style= "position: relative; height: 150px; width: 100%; margin-top: 20px; margin-left: 20px;">
 
 
   <table width="100%" class="field">
@@ -13,18 +13,19 @@
 	<!-- １行目 -->
 	<tr style="height:30px;">
 		<td style="text-align:left;">荷主：</td>
-		<td colspan="5">
-			<select id="mninusi" style="width:200px">
+		<td>
+			<select name="ninusiCd"  id="mninusiCombo" style="align:left;width:200px">
 				<option value=""></option>
 				<?php
-				foreach($mninusi as $key => $value) :
-				?>
-				<option value="<?php echo $key ?>"><?php echo $value?></option>
+						foreach($mninusi as $value) :
+						?>
+				<option value="<?php echo $value['NINUSI_CD'] ?>"><?php echo $value['NINUSI_NM']?></option>
 				<?php
-				endforeach;
-				?>
+						endforeach;
+						?>
 			</select>
 		</td>
+		<td colspan="4"></td>
 	</tr>
 
 	<!-- ２行目 -->

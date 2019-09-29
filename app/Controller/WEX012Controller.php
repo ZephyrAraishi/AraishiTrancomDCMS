@@ -80,9 +80,7 @@ class WEX012Controller extends AppController {
 
 		$ninusi_cd = '';
 		$sosiki_cd = '';
-
 		$sosiki_nm = '';
-		$sosiki_ryaku = '';
 
 		$pageID = 1;
 		$return_cd = '';
@@ -90,17 +88,14 @@ class WEX012Controller extends AppController {
 		$message = '';
 
 		//パラメータ　検索条件を取得
-		if (isset($this->request->query['mninusi'])){
-			$ninusi_cd = $this->request->query['mninusi'];
+		if (isset($this->request->query['ninusi_cd'])){
+			$ninusi_cd = $this->request->query['ninusi_cd'];
 		}
 		if (isset($this->request->query['sosiki_cd'])){
 			$sosiki_cd = $this->request->query['sosiki_cd'];
 		}
 		if (isset($this->request->query['sosiki_nm'])){
 			$sosiki_nm = $this->request->query['sosiki_nm'];
-		}
-		if (isset($this->request->query['sosiki_ryaku'])){
-			$sosiki_ryaku = $this->request->query['sosiki_ryaku'];
 		}
 
 		//POST時
@@ -130,10 +125,9 @@ class WEX012Controller extends AppController {
 
 			$this->redirect('/WEX012/index?return_cd=' . $return_cd .
 										  '&message=' . $message .
-										  '&mninusi=' . $ninusi_cd .
+										  '&ninusi_cd=' . $ninusi_cd .
 										  '&sosiki_cd=' . $sosiki_cd .
 										  '&sosiki_nm=' . $sosiki_nm .
-										  '&sosiki_ryaku=' . $sosiki_ryaku .
 										  '&pageID=' . $pageID .
 										  '&display=false'
 										  );
@@ -145,7 +139,7 @@ class WEX012Controller extends AppController {
 
 		} else if (!$this->Session->check('displayWEX012') && $display == "false") {
 
-			$this->redirect('/WEX012/index?&mninusi=' . $ninusi_cd .
+			$this->redirect('/WEX012/index?&ninusi_cd=' . $ninusi_cd .
 										  '&sosiki_cd=' . $sosiki_cd .
 										  '&sosiki_nm=' . $sosiki_nm .
 										  '&pageID=' . $pageID
@@ -155,7 +149,7 @@ class WEX012Controller extends AppController {
 
 
 		//組織マスタ一覧
-		$lsts = $this->WEX012Model->getMSosikiLst($ninusi_cd, $sosiki_cd, $sosiki_nm, $sosiki_ryaku);
+		$lsts = $this->WEX012Model->getMSosikiLst($ninusi_cd, $sosiki_cd, $sosiki_nm);
 
 		//ページャー
 		$pageNum = 50;
@@ -182,7 +176,6 @@ class WEX012Controller extends AppController {
 		$limit = $index + $pageNum;
 
 		if ($limit > count($lsts)) {
-
 			$limit = count($lsts);
 		}
 

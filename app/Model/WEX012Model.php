@@ -42,7 +42,7 @@ class WEX012Model extends DCMSAppModel{
 	 * @access   public
 	 * @return   組織マスタ
 	 */
-	public function getMSosikiLst($ninusi_cd, $sosiki_cd,  $sosiki_nm, $sosiki_ryaku) {
+	public function getMSosikiLst($ninusi_cd, $sosiki_cd,  $sosiki_nm) {
 		/* ▼取得カラム設定 */
 		$fields = 'A.NINUSI_CD,B.NINUSI_NM,A.SOSIKI_CD,A.SOSIKI_NM,A.SOSIKI_RYAKU';
 
@@ -70,11 +70,6 @@ class WEX012Model extends DCMSAppModel{
 			$conditionVal['sosiki_nm'] = $sosiki_nm . "%";
 		}
 		//組織略称
-		if ($sosiki_ryaku != null){
-			$condition .= " AND ( A.SOSIKI_RYAKU LIKE :sosiki_ryaku " ;
-			$conditionVal['sosiki_ryaku'] = "%" . $soski_ryaku . "%";
-		}
-
 		/* ▼組織情報取得 */
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
