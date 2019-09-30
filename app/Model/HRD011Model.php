@@ -1,6 +1,6 @@
 <?php
 /**
- * HRD040Model
+ * HRD011Model
  *
  * スタッフ許可マスタ設定
  *
@@ -13,9 +13,9 @@
 
 App::uses('MMessage', 'Model');
 
-class HRD040Model extends DCMSAppModel{
+class HRD011Model extends DCMSAppModel{
 
-	public $name = 'HRD040Model';
+	public $name = 'HRD011Model';
 	public $useTable = false;
 
 	public $errors = array();
@@ -42,9 +42,9 @@ class HRD040Model extends DCMSAppModel{
 	 * @access   public
 	 * @return   スタッフ許可マスタ
 	 */
-	public function getMStaffKyokaLst($staff_cd, $subsystem_id, $kino_id) {
+	public function getMStaffKyokaLst($staff_cd, $sub_system_id, $kino_id) {
 		/* ▼取得カラム設定 */
-		$fields = 'KN.STAFF_CD,KN.STAFF_NM,KY.SUB_SYSTEM_ID,KY.KINO_ID';
+		$fields = 'A.STAFF_CD,B.STAFF_NM,A.SUB_SYSTEM_ID,A.KINO_ID';
 
 		/* ▼検索条件設定 */
 
@@ -52,8 +52,8 @@ class HRD040Model extends DCMSAppModel{
 		$conditionKey = '';
 
 		/* ▼検索条件設定 */
-		$condition  = "NINUSI_CD       = :ninusi_cd";
-		$condition .= " AND SOSIKI_CD  = :sosiki_cd";
+		$condition  = "A.NINUSI_CD       = :ninusi_cd";
+		$condition .= " AND A.SOSIKI_CD  = :sosiki_cd";
 
 		// 条件値指定
 		$conditionVal['ninusi_cd'] = $this->_ninusi_cd;
@@ -62,29 +62,29 @@ class HRD040Model extends DCMSAppModel{
 
 		//スタッフコード
 		if ($staff_cd != null){
-			$condition .= " AND KN.STAFF_CD LIKE :staff_cd " ;
+			$condition .= " AND A.STAFF_CD LIKE :staff_cd " ;
 			$conditionVal['staff_cd'] = $staff_cd . "%";
 		}
-		//サブシステムID
-		if ($subsystem_id != null){
-			$condition .= " AND KY.SUB_SYSTEM_ID LIKE :subsystem_id " ;
-			$conditionVal['subsystem_id'] = "%" . $subsystem_id . "%";
+		//サブシステムＩＤ
+		if ($sub_system_id != null){
+			$condition .= " AND A.SUB_SYSTEM_ID LIKE :sub_system_id " ;
+			$conditionVal['sub_system_id'] = "%" . $sub_system_id . "%";
 		}
-		//機能ID
+		//機能ＩＤ
 		if ($kino_id != null){
-			$condition .= " AND KY.KINO_ID LIKE :kino_id " ;
+			$condition .= " AND A.KINO_ID LIKE :kino_id " ;
 			$conditionVal['kino_id'] = "%" . $kino_id . "%";
 		}
 
-		/* ▼拠点情報取得 */
+		/* ▼スタッフ許可情報取得 */
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
-		$sql .= 'FROM M_STAFF_KYOKA KY INNER JOIN M_STAFF_KIHON KN ON (KY.STAFF_CD=KN.STAFF_CD) ';
+		$sql .= 'FROM M_STAFF_KYOKA A INNER JOIN M_STAFF_KIHON B ON A.NINUSI_CD=B.DAI_NINUSI_CD AND A.SOSIKI_CD=B.DAI_SOSIKI_CD AND A.STAFF_CD=B.STAFF_CD ';
 		$sql .= 'WHERE ';
 		$sql .= $condition;
 		$sql .= $conditionKey;
 		$sql .= " ORDER BY";
-		$sql .= "   KN.STAFF_CD";
+		$sql .= "   STAFF_CD";
 
 		$data = $this->query($sql, $conditionVal, false);
 		$data = self::editData($data);
@@ -93,7 +93,7 @@ class HRD040Model extends DCMSAppModel{
 	}
 
 	/**
-	 * 拠点情報編集処理
+	 * スタッフ許可情報編集処理
 	 * @access   public
 	 * @param    編集前情報
 	 * @return   編集後情報
@@ -151,16 +151,41 @@ class HRD040Model extends DCMSAppModel{
 					continue;
 				}
 				if (empty($SUB_SYSTEM_ID)) {
-					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, 'サブシステムID'));
+					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, 'サブシステムＩＤ'));
 					$this->errors['Check'][] =   $message;
 					continue;
 				}
 				if (empty($KINO_ID)) {
-					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '機能ID'));
+					$message = vsprintf($this->MMessage->getOneMessage('CMNE010001'), array($count, '機能ＩＤ'));
 					$this->errors['Check'][] =   $message;
 					continue;
 				}
 
+				//桁数チェック
+				if (mb_strlen($SUB_SYSTEM_ID) > 3) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE030004'), array($count, 'サブシステムＩＤ', '3'));
+					$this->errors['Check'][] =   $message;
+					continue;
+				}
+				if (mb_strlen($KINO_ID) > 3) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE030004'), array($count, '機能ＩＤ', '3'));
+					$this->errors['Check'][] =   $message;
+					continue;
+				}
+
+				//数字チェック
+				if (!preg_match("/^[0-9]+$/",$STAFF_CD)) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE030003'), array($count, 'スタッフコード'));
+					$this->errors['Check'][] =   $message;
+					continue;
+				}
+
+				//"000000"は入力不可
+				if ($STAFF_CD == '000000' ) {
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE030006'), array($count, 'スタッフコード', '001'));
+					$this->errors['Check'][] =   $message;
+					continue;
+				}
 			}
 		}
 
@@ -185,7 +210,9 @@ class HRD040Model extends DCMSAppModel{
 			$dataArray = $obj->data;
 
 			$CHANGED = $dataArray[1];
-			$BNRI_DAI_CD = $cellsArray[0];
+			$STAFF_CD = $cellsArray[0];
+			$SUB_SYSTEM_ID = $cellsArray[2];
+			$KINO_ID = $cellsArray[3];
 
 			// =================================================================
 			// キー重複チェック
@@ -200,7 +227,7 @@ class HRD040Model extends DCMSAppModel{
 				for ($i = 1; $i < $count2; $i++) {
 					$cellsArray2 = $data[$i]->cells;
 					$dataArray2 = $data[$i]->data;
-					if ($cellsArray2[0] == $BNRI_DAI_CD
+					if ($cellsArray2[0] == $STAFF_CD and $cellsArray2[2] == $SUB_SYSTEM_ID and $cellsArray2[3] == $KINO_ID
 							and $dataArray2[1]  == '2') {
 						$count3++;
 					}
@@ -238,9 +265,9 @@ class HRD040Model extends DCMSAppModel{
 			if ($CHANGED == '2') {
 
 				//データベースにチェック
-				$dataForCheck = $this->getMStaffKyokaForCheck($STAFF_CD,$SUB_SYSTEM_ID,$KINO_ID);
+				$dataForCheck = $this->getMStaffKyokaForCheck($STAFF_CD, $SUB_SYSTEM_ID, $KINO_ID);
 				if (!empty($dataForCheck)) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE030005'), array($count, 'スタッフ許可マスタ'));
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE030005'), array($count, 'スタッフコード'));
 					$this->errors['Check'][] =   $message;
 					continue;
 				}
@@ -250,7 +277,7 @@ class HRD040Model extends DCMSAppModel{
 			if ($CHANGED == 1) {
 
 				//データベースにチェック
-				$dataForCheck = $this->getMStaffKyokaForCheck($STAFF_CD,$SUB_SYSTEM_ID,$KINO_ID);
+				$dataForCheck = $this->getMStaffKyokaForCheck($STAFF_CD, $SUB_SYSTEM_ID, $KINO_ID);
 				if (empty($dataForCheck)) {
 					$message = vsprintf($this->MMessage->getOneMessage('CMNE010008'), array($count));
 					$this->errors['Check'][] =   $message;
@@ -265,7 +292,6 @@ class HRD040Model extends DCMSAppModel{
 
 		return true;
 	}
-
 
 
 	public function setStaffKyokaMst($arrayList, $staff_cd) {
@@ -285,12 +311,12 @@ class HRD040Model extends DCMSAppModel{
 			$sql .= "'" . $staff_cd . "',";
 			$sql .= "'" . $this->_ninusi_cd . "',";
 			$sql .= "'" . $this->_sosiki_cd . "',";
-			$sql .= "'WEX',";
-			$sql .= "'030',";
+			$sql .= "'HRD',";
+			$sql .= "'011',";
 			$sql .= "1";
 			$sql .= ")";
 
-			$this->execWithPDOLog($pdo,$sql,'HRD040 排他制御オン');
+			$this->execWithPDOLog($pdo,$sql,'HRD011 排他制御オン');
 
 			try {
 
@@ -327,80 +353,48 @@ class HRD040Model extends DCMSAppModel{
 
 						//スタッフ許可マスタを更新する
 						$sql = "UPDATE M_STAFF_KYOKA SET";
-						$sql .= " SUB_SYSTEM_ID = '" . $SUB_SYSTEM_ID . "',";
-						$sql .= ",KINO_ID = '" . $KINO_ID . "',";
-						$sql .= " WHERE NINUSI_CD = '" . $this->_ninusi_cd . "',";
-						$sql .= "  AND  SOSIKI_CD = '" . $this->_sosiki_cd . "',";
-						$sql .= "'" . $staff_cd . "',";
-						$sql .= "'" . $BNRI_DAI_CD . "',";
-						$sql .= "'" . $BNRI_DAI_NM . "',";
-						$sql .= "'" . $BNRI_DAI_RYAKU . "',";
-						$sql .= "'" . $BNRI_DAI_EXP . "',";
-						$sql .= "'" . $KBN_TANI_CD . "',";
-						$sql .= "@return_cd";
-						$sql .= ")";
+						$sql .= "SUB_SYSTEM_ID='" . $SUB_SYSTEM_ID . "',";
+						$sql .= "KINO_ID='" . $KINO_ID . "',";
+						$sql .= "MODIFIED='" . $staff_cd . "',";
+						$sql .= "MODIFIED_STAFF=now()";
+						$sql .= " WHERE NINUSI_CD='" . $this->_ninusi_cd . "'";
+						$sql .= "   AND SOSIKI_CD='" . $this->_sosiki_cd . "'";
+						$sql .= "   AND STAFF_CD='" . $staff_cd . "'";
+						$sql .= "   AND SUB_SYSTEM_ID='" . $SUB_SYSTEM_ID . "'";
+						$sql .= "   AND KINO_ID='" . $KINO_ID . "'";
 
-						$this->execWithPDOLog($pdo2,$sql, '大分類マスタ　更新');
+						$this->execWithPDOLog($pdo2,$sql, 'スタッフ許可マスタ　更新');
 
 					//新規の場合
 					} else if ($CHANGED == 2) {
 
-						//大分類マスタを追加する
-						$sql = "CALL P_HRD040_INS_DAI_BNRI(";
+						//スタッフ許可マスタを追加する
+						$sql = "INSERT INTO M_STAFF_KYOKA(NINUSI_CD,SOSIKI_CD,STAFF_CD,SUB_SYSTEM_ID,KINO_ID,CREATED,CREATED_STAFF,MODIFIED,MODIFIED_STAFF) VALUES(";
 						$sql .= "'" . $this->_ninusi_cd . "',";
 						$sql .= "'" . $this->_sosiki_cd . "',";
 						$sql .= "'" . $staff_cd . "',";
-						$sql .= "'" . $BNRI_DAI_CD . "',";
-						$sql .= "'" . $BNRI_DAI_NM . "',";
-						$sql .= "'" . $BNRI_DAI_RYAKU . "',";
-						$sql .= "'" . $BNRI_DAI_EXP . "',";
-						$sql .= "'" . $KBN_TANI_CD . "',";
-						$sql .= "@return_cd";
+						$sql .= "'" . $SUB_SYSTEM_ID . "',";
+						$sql .= "'" . $KINO_ID . "',";
+						$sql .= "'" . $staff_cd . "',";
+						$sql .= "now(),";
+						$sql .= "'" . $staff_cd . "',";
+						$sql .= "now()";
 						$sql .= ")";
 
-						$this->execWithPDOLog($pdo2,$sql, '大分類マスタ　追加');
-
-						$sql = "SELECT";
-						$sql .= " @return_cd";
-
-						$this->queryWithPDOLog($stmt,$pdo2,$sql, '大分類マスタ　追加');
-
-						$result = $stmt->fetch(PDO::FETCH_ASSOC);
-						$return_cd = $result["@return_cd"];
-
-						if ($return_cd == "1") {
-
-							throw new Exception('大分類マスタ　追加');
-						}
+						$this->execWithPDOLog($pdo2,$sql, 'スタッフ許可マスタ　追加');
 
 					//削除の場合
 					} else if ($CHANGED == 3 || $CHANGED == 4) {
 
-							if (!empty($BNRI_DAI_CD)) {
+						//スタッフ許可マスタを削除する
+						$sql = "DELETE FROM M_STAFF_KYOKA";
+						$sql .= " WHERE NINUSI_CD='" . $this->_ninusi_cd . "'";
+						$sql .= "   AND SOSIKI_CD='" . $this->_sosiki_cd . "'";
+						$sql .= "   AND STAFF_CD='" . $STAFF_CD . "'";
+						$sql .= "   AND SUB_SYSTEM_ID='" . $SUB_SYSTEM_ID . "'";
+						$sql .= "   AND KINO_ID='" . $KINO_ID . "'";
 
-								//大分類マスタを削除する
-								$sql = "CALL P_HRD040_DEL_DAI_BNRI(";
-								$sql .= "'" . $this->_ninusi_cd . "',";
-								$sql .= "'" . $this->_sosiki_cd . "',";
-								$sql .= "'" . $BNRI_DAI_CD . "',";
-								$sql .= "@return_cd";
-								$sql .= ")";
-
-								$this->execWithPDOLog($pdo2,$sql, '大分類マスタ　削除');
-
-								$sql = "SELECT";
-								$sql .= " @return_cd";
-
-								$this->queryWithPDOLog($stmt,$pdo2,$sql, '大分類マスタ　削除');
-
-								$result = $stmt->fetch(PDO::FETCH_ASSOC);
-								$return_cd = $result["@return_cd"];
-
-								if ($return_cd == "1") {
-
-									throw new Exception('大分類マスタ　削除');
-								}
-							}
+						$this->execWithPDOLog($pdo2,$sql, 'スタッフ許可マスタ　削除');
 
 					}
 
@@ -410,7 +404,7 @@ class HRD040Model extends DCMSAppModel{
 
 			} catch (Exception $e) {
 
-				$this->printLog("fatal", "例外発生", "HRD040", $e->getMessage());
+				$this->printLog("fatal", "例外発生", "HRD011", $e->getMessage());
 				$pdo2->rollBack();
 			}
 
@@ -421,12 +415,12 @@ class HRD040Model extends DCMSAppModel{
 			$sql .= "'" . $staff_cd . "',";
 			$sql .= "'" . $this->_ninusi_cd . "',";
 			$sql .= "'" . $this->_sosiki_cd . "',";
-			$sql .= "'WEX',";
-			$sql .= "'030',";
+			$sql .= "'HRD',";
+			$sql .= "'011',";
 			$sql .= "0";
 			$sql .= ")";
 
-			$this->execWithPDOLog($pdo,$sql,'HRD040 排他制御オフ');
+			$this->execWithPDOLog($pdo,$sql,'HRD011 排他制御オフ');
 
 			$pdo = null;
 
@@ -438,23 +432,11 @@ class HRD040Model extends DCMSAppModel{
 				return false;
 			}
 
-			//更新後は、以下を必ず入れること
-			App::uses('MBunrui', 'Model');
-
-			$this->MBunrui = new MBunrui($this->_ninusi_cd,
-			                                     $this->_sosiki_cd,
-			                                     $this->name
-			                                     );
-
-			// 削除
-			$this->MBunrui->deleteMemcache();
-			//　ここまで
-
 			return true;
 
 		} catch (Exception $e) {
 
-			$this->printLog("fatal", "例外発生", "HRD040", $e->getMessage());
+			$this->printLog("fatal", "例外発生", "HRD011", $e->getMessage());
 			$pdo = null;
 
 		}
@@ -468,12 +450,12 @@ class HRD040Model extends DCMSAppModel{
 
 
 	/**
-	 * 大分類マスタ取得（チェック用）
+	 * スタッフ許可マスタ取得（チェック用）
 	 */
-	public function getMBnriDaiForCheck($bnri_dai_cd) {
+	public function getMStaffKyokaForCheck($staff_cd, $sub_system_id, $kino_id) {
 
 		/* ▼取得カラム設定 */
-		$fields = '*';
+		$fields = 'A.STAFF_CD,B.STAFF_NM,A.SUB_SYSTEM_ID,A.KINO_ID';
 
 		/* ▼検索条件設定 */
 
@@ -489,19 +471,31 @@ class HRD040Model extends DCMSAppModel{
 		$conditionVal['sosiki_cd'] = $this->_sosiki_cd;
 
 
-		//大分類コード
-		$condition .= " AND BNRI_DAI_CD = :bnri_dai_cd " ;
-		$conditionVal['bnri_dai_cd'] = $bnri_dai_cd;
+		//スタッフコード
+		if ($staff_cd != null){
+			$condition .= " AND A.STAFF_CD LIKE :staff_cd " ;
+			$conditionVal['staff_cd'] = $staff_cd . "%";
+		}
+		//サブシステムＩＤ
+		if ($sub_system_id != null){
+			$condition .= " AND A.SUB_SYSTEM_ID LIKE :sub_system_id " ;
+			$conditionVal['sub_system_id'] = "%" . $sub_system_id . "%";
+		}
+		//機能ＩＤ
+		if ($kino_id != null){
+			$condition .= " AND A.KINO_ID LIKE :kino_id " ;
+			$conditionVal['kino_id'] = "%" . $kino_id . "%";
+		}
 
-
-
-		/* ▼拠点情報取得 */
+		/* ▼スタッフ許可情報取得 */
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
-		$sql .= 'FROM V_HRD040_M_BNRI_DAI_CHK ';
+		$sql .= 'FROM M_STAFF_KYOKA A INNER JOIN M_STAFF_KIHON B ON A.NINUSI_CD=B.DAI_NINUSI_CD AND A.SOSIKI_CD=B.DAI_SOSIKI_CD AND A.STAFF_CD=B.STAFF_CD ';
 		$sql .= 'WHERE ';
 		$sql .= $condition;
 		$sql .= $conditionKey;
+		$sql .= " ORDER BY";
+		$sql .= "   STAFF_CD";
 
 		$data = $this->query($sql, $conditionVal, false);
 		$data = self::editData($data);
@@ -521,7 +515,7 @@ class HRD040Model extends DCMSAppModel{
 			$pdo = new PDO($this->db_dsn, $this->db_user_name, $this->db_user_password);
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-			$sql = "CALL P_HRD040_GET_TIMESTAMP(";
+			$sql = "CALL P_HRD011_GET_TIMESTAMP(";
 			$sql .= "'" . $this->_ninusi_cd . "',";
 			$sql .= "'" . $this->_sosiki_cd . "',";
 			$sql .= "@timestamp";
@@ -558,7 +552,7 @@ class HRD040Model extends DCMSAppModel{
 
 		} catch (Exception $e){
 
-			$this->printLog("fatal", "例外発生", "HRD040", $e->getMessage());
+			$this->printLog("fatal", "例外発生", "HRD011", $e->getMessage());
 			$pdo = null;
 		    throw $e;
 		}

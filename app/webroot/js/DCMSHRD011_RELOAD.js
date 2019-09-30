@@ -11,16 +11,16 @@ function initReload() {
 
 	if (get.length != 0) {
 
-		if (get["ninusi_cd"] != null) {
-			$("mninusiCombo").setValue(get["ninusi_cd"]);
+		if (get["staff_cd"] != null) {
+			$("HRD011ModelStaffCd").setValue(get["staff_cd"]);
 		}
 
-		if (get["sosiki_cd"] != null) {
-			$("WEX012ModelSosikiCd").setValue(get["sosiki_cd"]);
+		if (get["sub_systemid"] != null) {
+			$("HRD011ModelSubSystemid").setValue(decodeURI(get["sub_systemid"]));
 		}
 
-		if (get["sosiki_nm"] != null) {
-			$("WEX012ModelSosikiNm").setValue(decodeURI(get["sosiki_nm"]));
+		if (get["kinoid"] != null) {
+			$("HRD011ModelKinoid").setValue(decodeURI(get["kinoid"]));
 		}
 
 		if (get["return_cd"] != null) {
@@ -33,7 +33,7 @@ function initReload() {
 
 					$("errorMsg").update(Base64.decode(get["message"]));
 
-					//
+					//工程
 					var resultRows = $$("body")[0].getElementsBySelector(".tableRow");
 
 					for(var i=0 ; i< resultRows.length; i++) {
@@ -59,7 +59,7 @@ function initReload() {
 
 
 //
-//アップデートイベント初期化
+//アップデートイベント初期か
 function initUpdate(url) {
 
 	actionUrl3 = url;
@@ -144,10 +144,10 @@ function clickUploadButton(event) {
 	  onSuccess : onSuccessEvent,
 
 	  onFailure : function( event )  {
-	    location.href = "/DCMS/WEX012/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000103"));
+	    location.href = "/DCMS/HRD011/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000103"));
 	  },
 	  onException : function( event, ex )  {
-	    location.href = "/DCMS/WEX012/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000104"));
+	    location.href = "/DCMS/HRD011/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000104"));
 	  }
 	});
 }
@@ -158,11 +158,10 @@ function onSuccessEvent(res) {
 
 	//レスポンス
 	var result = escapePHP(res.responseText.trim());
-//	var result = res.responseText.strip();
 
-	var ninusi_cd = '';
-	var sosiki_cd = '';
-	var sosiki_nm = '';
+	var staff_cd = '';
+	var sub_system_id = '';
+	var kino_id = '';
 
 	var pageID    = '1';
 
@@ -170,24 +169,30 @@ function onSuccessEvent(res) {
 
 	if (get.length != 0) {
 
-		if (get["ninusi_cd"] != null) {
-			ninusi_cd = get["ninusi_cd"];
+
+		if (get["staff_cd"] != null) {
+			staff_cd = get["staff_cd"];
 		}
 
-		if (get["sosiki_cd"] != null) {
-			sosiki_cd = get["sosiki_cd"];
+		if (get["sub_systemid"] != null) {
+			sub_system_id = decodeURI(get["sub_systemid"]);
 		}
 
-		if (get["sosiki_nm"] != null) {
-			sosiki = get["sosiki_nm"];
+		if (get["kinoid"] != null) {
+			kino_id = decodeURI(get["kinoid"]);
+		}
+
+		if (get["pageID"] != null) {
+			pageID = get["pageID"];
 		}
 
 	}
 
-	location.href = "/DCMS/WEX012/index?" + result + "&ninusi_cd=" + ninusi_cd +
-													 "&sosiki_cd=" + sosiki_cd +
-													 "&sosiki_nm=" + sosiki_nm +
+	location.href = "/DCMS/HRD011/index?" + result + "&staff_cd=" + staff_cd +
+													 "&sub_system_id=" + sub_system_id +
+													 "&kino_id=" + kino_id +
 													 "&pageID=" + pageID +
 													 "&display=true";
+
 
 }

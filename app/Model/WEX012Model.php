@@ -283,7 +283,7 @@ class WEX012Model extends DCMSAppModel{
 				//データベースにチェック
 				$dataForCheck = $this->getMSosikiForCheck($NINUSI_CD, $SOSIKI_CD);
 				if (!empty($dataForCheck)) {
-					$message = vsprintf($this->MMessage->getOneMessage('WEXE050005'), array($count, '細分類コード'));
+					$message = vsprintf($this->MMessage->getOneMessage('WEXE050005'), array($count, '組織コード'));
 					$this->errors['Check'][] =   $message;
 					continue;
 				}
@@ -370,8 +370,8 @@ class WEX012Model extends DCMSAppModel{
 					if ($CHANGED == 1) {
 
 						//組織マスタを更新する
-						$sql = "CALL UPDATE M_SOSIKI SET";
-						$sql .= "SOSIKI_NM='" . $SOSIKI_NM . "',";
+						$sql = "UPDATE M_SOSIKI SET";
+						$sql .= " SOSIKI_NM='" . $SOSIKI_NM . "'";
 						$sql .= ",SOSIKI_RYAKU='" . $SOSIKI_RYAKU . "'";
 						$sql .= ",MODIFIED=now()";
 						$sql .= ",MODIFIED_STAFF='" . $staff_cd . "'";
@@ -384,7 +384,7 @@ class WEX012Model extends DCMSAppModel{
 					} else if ($CHANGED == 2) {
 
 						//組織マスタを追加する
-						$sql = "CALL INSERT INTO M_SOSIKI(NINUSI_CD,SOSIKI_CD,SOSIKI_NM,SOSIKI_RYAKU,CREATED,CREATED_STAFF,MODIFIED,MODIFIED_STAFF) VALUES(";
+						$sql = "INSERT INTO M_SOSIKI(NINUSI_CD,SOSIKI_CD,SOSIKI_NM,SOSIKI_RYAKU,CREATED,CREATED_STAFF,MODIFIED,MODIFIED_STAFF) VALUES(";
 						$sql .= "'" . $NINUSI_CD . "',";
 						$sql .= "'" . $SOSIKI_CD . "',";
 						$sql .= "'" . $SOSIKI_NM . "',";
@@ -405,8 +405,8 @@ class WEX012Model extends DCMSAppModel{
 
 								//組織マスタを削除する
 								$sql = "DELETE FROM M_SOSIKI ";
-								$sql .= " WHERE NINUSI_CD='" . $NINUNSI_CD . "',";
-								$sql .= "   AND SOSIKI_CD='" . $SOSIKI_CD . "',";
+								$sql .= " WHERE NINUSI_CD='" . $NINUSI_CD . "'";
+								$sql .= "   AND SOSIKI_CD='" . $SOSIKI_CD . "'";
 
 								$this->execWithPDOLog($pdo2,$sql, '組織マスタ　削除');
 
@@ -489,7 +489,7 @@ class WEX012Model extends DCMSAppModel{
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
 		$sql .= 'FROM M_NINUSI ';
-		$sql .= 'WHERE ';
+		$sql .= 'WHERE 0=0';
 		$sql .= $condition;
 		$sql .= $conditionKey;
 
@@ -530,7 +530,7 @@ class WEX012Model extends DCMSAppModel{
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
 		$sql .= 'FROM M_SOSIKI ';
-		$sql .= 'WHERE ';
+		$sql .= 'WHERE 0=0';
 		$sql .= $condition;
 		$sql .= $conditionKey;
 
@@ -553,8 +553,6 @@ class WEX012Model extends DCMSAppModel{
 			$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 			$sql = "CALL P_WEX012_GET_TIMESTAMP(";
-			$sql .= "'" . $this->_ninusi_cd . "',";
-			$sql .= "'" . $this->_sosiki_cd . "',";
 			$sql .= "@timestamp";
 			$sql .= ")";
 

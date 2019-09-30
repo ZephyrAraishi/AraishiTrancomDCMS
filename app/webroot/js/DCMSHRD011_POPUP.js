@@ -2,11 +2,9 @@
 var selectedRow;
 
 //行の値保持
-var orgValNinusiCd = "";
-var orgValNinusiNm = "";
-var orgValSosikiCd = "";
-var orgValSosikiNm = "";
-var orgValSosikiRyaku = "";
+var orgValStaffCd = "";
+var orgValSubSystemId = "";
+var orgValKinoId = "";
 
 var actionUrl = "";
 
@@ -159,10 +157,10 @@ function clickPopUp(event) {
 	  onSuccess : viewPopUp,
 
 	  onFailure : function( event )  {
-	    location.href = "/DCMS/WEX012/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000101"));
+	    location.href = "/DCMS/HRD011/index?return_cd=91&message=" + Base64.encode(DCMSMessage.format("CMNE000101"));
 	  },
 	  onException : function( event, ex )  {
-	    location.href = "/DCMS/WEX012/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000102"));
+	    location.href = "/DCMS/HRD011/index?return_cd=92&message=" + Base64.encode(DCMSMessage.format("CMNE000102"));
 	  }
 	});
 }
@@ -175,14 +173,14 @@ function viewPopUp(event) {
 				   {
 					id: "popup",
 					className: "alphacube",
-					title: "組織マスタ設定",
-					width:1000,
-					height:200,
+					title: "スタッフ許可マスタ設定",
+					width:900,
+					height:240,
 					draggable: true,
 					destroyOnclose: true,
 					recenterAuto: false,
 					buttonClass : "buttons",
-					okLabel: "更新",
+					okLabel: "",
 					cancelLabel:"キャンセル",
 					onOk: clickOKButton,
 					onCancel: clickCANCELButton,
@@ -202,7 +200,7 @@ function viewPopUp(event) {
 			type : "button",
 			value : "削除"
 	});
-	deleteButton.addClassName("buttonsWEX05001");
+	deleteButton.addClassName("buttonsHRD01101");
 
 	$$(".alphacube_buttons")[0].insert({
 		top: deleteButton
@@ -217,22 +215,16 @@ function viewPopUp(event) {
 
 
 
-	$("ninusiCd").value = cells[0].innerHTML;
-	$("ninusiNm").value = cells[1].innerHTML;
-	$("sosikiCd").value = cells[2].innerHTML;
-	$("sosikiNm").value     = cells[3].innerHTML;
-	$("sosikiRyaku").value  = cells[4].innerHTML;
+	$("staffcd").value = cells[0].innerHTML;
+	$("subSystemid").value = cells[2].innerHTML;
+	$("kinoid").value = cells[3].innerHTML;
 
 	//値を保持
 	//　clickOKButtonで使用するため
-	orgValNinusiCd = cells[0].innerHTML;
-	orgValNinusiNm    = cells[1].innerHTML;
-	orgValSosikiCd = cells[2].innerHTML;
-	orgValSosikiNm    = cells[3].innerHTML;
-	orgValSosikiRyaku = cells[4].innerHTML;
+	orgValSubSystemId = cells[2].innerHTML;
+	orgValKinoId = cells[3].innerHTML;
 
 }
-
 
 //更新ボタンクリックイベントハンドラ
 function clickOKButton(window) {
@@ -244,91 +236,74 @@ function clickOKButton(window) {
 
 	// テキスト値取得
 	// 　下、子Viewの中
-	var ninusiCd    = $F("ninusiCd");
-	var ninusiNm    = $F("ninusiNm");
-	var sosikiCd    = $F("sosikiCd");
-	var sosikiNm    = $F("sosikiNm");
-	var sosikiRyaku = $F("sosikiRyaku");
+	var staffCd = $F("staffcd");
+	var subSystemId = $F("subSystemid");
+	var kinoId = $F("kinoid");
 
 	//　入力チェック
 	//必須チェック
-	if (!DCMSValidation.notEmpty($F("ninusiCd"))) {
-		alert(DCMSMessage.format("CMNE000001", "荷主コード"));
+	if (!DCMSValidation.notEmpty($F("staffcd"))) {
+		alert(DCMSMessage.format("CMNE000001", "スタッフコード"));
 		return;
 	}
-	if (!DCMSValidation.notEmpty($F("sosikiCd"))) {
-		alert(DCMSMessage.format("CMNE000001", "組織コード"));
+	if (!DCMSValidation.notEmpty($F("subSystemid"))) {
+		alert(DCMSMessage.format("CMNE000001", "サブシステムＩＤ"));
 		return;
 	}
-	if (!DCMSValidation.notEmpty($F("sosikiNm"))) {
-		alert(DCMSMessage.format("CMNE000001", "組織名称"));
-		return;
-	}
-	if (!DCMSValidation.notEmpty($F("sosikiRyaku"))) {
-		alert(DCMSMessage.format("CMNE000001", "組織略称"));
+	if (!DCMSValidation.notEmpty($F("kinoid"))) {
+		alert(DCMSMessage.format("CMNE000001", "機能ＩＤ"));
 		return;
 	}
 
 	//数字チェック
-	if (!DCMSValidation.numeric($F("sosikiCd"))) {
-		alert(DCMSMessage.format("CMNE000002", "組織コード"));
-		return;
-	}
-	if (!DCMSValidation.numeric($F("ninusiCd"))) {
-		alert(DCMSMessage.format("CMNE000002", "荷主コード"));
+	if (!DCMSValidation.numeric($F("staffcd"))) {
+		alert(DCMSMessage.format("CMNE000002", "スタッフコード"));
 		return;
 	}
 
 	//桁数チェック
-	if (!DCMSValidation.numLength($F("sosikiCd"), 10)) {
-		alert(DCMSMessage.format("CMNE000004", "組織コード","10"));
-		return;
-	}
-	if (!DCMSValidation.numLength($F("ninusiCd"), 10)) {
-		alert(DCMSMessage.format("CMNE000004", "荷主コード","10"));
+	if (!DCMSValidation.numLength($F("kinoid"), 3)) {
+		alert(DCMSMessage.format("CMNE000004", "機能ＩＤ","3"));
 		return;
 	}
 
-	//"0000000000"は入力不可
-	if (parseInt($F("sosikiCd"), 10) <= 0 ) {
-		alert(DCMSMessage.format("CMNE000019", "組織コード","001"));
+	//"000"は入力不可
+	if (parseInt($F("staffcd"), 10) <= 0 ) {
+		alert(DCMSMessage.format("CMNE000019", "スタッフコード","001"));
 		return;
 	}
 
 	//最大桁数チェック
-	if (!DCMSValidation.maxLength($F("sosikiNm"), 20)) {
-		alert(DCMSMessage.format("CMNE000003", "組織名称"));
+	if (!DCMSValidation.maxLength($F("subSystemid"), 3)) {
+		alert(DCMSMessage.format("CMNE000003", "サブシステム"));
 		return;
 	}
-	if (!DCMSValidation.maxLength($F("sosikiRyaku"), 6)) {
-		alert(DCMSMessage.format("CMNE000003", "組織略称"));
+	if (!DCMSValidation.maxLength($F("kinoid"), 3)) {
+		alert(DCMSMessage.format("CMNE000003", "機能ＩＤ"));
 		return;
 	}
-
 
 	//更新
-
-	var flgUpdate  = "0";
-
 	// 　入力前と変化した場合
 
-	if (sosikiNm != orgValSosikiNm) {
+	if (subSystemId != orgValSubSystemId) {
+		setUpdatedCellColor(cells[2]);		//項目のbackground変更
+
+		cells[2].innerHTML = subSystemId;		//値のセット
+
+		//新規の場合はそのまま
+		if (data[1].innerHTML == "0") {
+			data[1].innerHTML = "1";
+		}
+		setRowColor(data[1].innerHTML, selectedRow)	//行のbackground変更
+	}
+
+	if (kinoId != orgValKinoId) {
 		setUpdatedCellColor(cells[3]);		//項目のbackground変更
 
-		cells[3].innerHTML = sosikiNm;		//値のセット
-		flgUpdate  = "1";
-	}
+		cells[3].innerHTML = kinoId;		//値のセット
 
-	if (sosikiRyaku != orgValSosikiRyaku) {
-		setUpdatedCellColor(cells[4]);		//項目のbackground変更
-
-		cells[4].innerHTML = sosikiRyaku;		//値のセット
-		flgUpdate  = "1";
-	}
-
-	//1か所でも修正した場合
-	if (flgUpdate  == "1") {
-		//新規の場合はそのまま
+		//新規の場合はそのまま（行のbackground変更）
 		if (data[1].innerHTML == "0") {
 			data[1].innerHTML = "1";
 		}
@@ -355,6 +330,8 @@ function clickDeletedRow(event) {
 		dbclickFlag = 0;
 		return;
 	}
+
+
 
 	dbclickFlag = 1;
 
@@ -386,13 +363,13 @@ function clickDeletedRow(event) {
 				   {
 					id: "popup",
 					className: "alphacube",
-					title: "細分類マスタ設定",
+					title: "スタッフ許可マスタ設定",
 					width:400,
-					height:200,
+					height:100,
 					draggable: true,
 					destroyOnclose: true,
 					recenterAuto: false,
-					buttonClass : "buttonsWEX05001",
+					buttonClass : "buttonsHRD01101",
 					okLabel: "解除",
 					cancelLabel:"キャンセル",
 					onOk: clickOKReverseButton,
@@ -461,7 +438,6 @@ function clickDeleteButton(event) {
 	var cells = selectedRow.getElementsBySelector(".tableCell");
 	var data = selectedRow.getElementsBySelector(".hiddenData");
 
-
 	setDeletedRowColor(selectedRow);
 
 	for (var i=0; i < cells.length; i++) {
@@ -493,8 +469,6 @@ function clickDeleteButton(event) {
 		data[1].innerHTML = "5";
 
 	}
-
-
 
 	popUpView.close();
 	dbclickFlag = 0;

@@ -1,7 +1,7 @@
 <?php
 			echo $this->Html->script(array('effects','window','base64',
-					'DCMSMessage','DCMSCommon','DCMSValidation','DCMSWEX012_RELOAD','DCMSWEX015_POPUP',
-					'DCMSWEX012_ADDROW','DCMSWEX012_BUNRUI'), array('inline'=>false));
+					'DCMSMessage','DCMSCommon','DCMSValidation','DCMSWEX012_RELOAD','DCMSWEX012_POPUP',
+					'DCMSWEX012_ADDROW'), array('inline'=>false));
             echo $this->Html->css(array('themes/default','kotei_dropdown_menu','themes/alert','themes/alphacube','DCMSWEX'), false, array('inline'=>false));
 ?>
 <!-- WRAPPER -->
