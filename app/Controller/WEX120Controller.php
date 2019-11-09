@@ -1,10 +1,10 @@
 <?php
 /**
- * WPO040
+ * WEX120
  *
- * 工程管理画面
+ * 品質内容登録画面
  *
- * @category      WPO
+ * @category      WEX
  * @package       DCMS
  * @subpackage    Controller
  * @author        ZephyrLabo
@@ -16,9 +16,9 @@ App::uses('MBunrui', 'Model');
 App::uses('MMeisyo', 'Model');
 App::uses('WPO040Model', 'Model');
 
-class WPO040Controller extends AppController {
+class WEX120Controller extends AppController {
 
-	public $name = 'WPO040';
+	public $name = 'WEX120';
 	public $layout = "DCMS";
 
 	/**
@@ -34,9 +34,9 @@ class WPO040Controller extends AppController {
 		//システム名
 		$this->set('system', Sanitize::stripAll($this->Session->read('system_name')));
 		//サブシステム名
-		$this->set('sub_system', Sanitize::stripAll($this->Session->read('menu_subsys')['WPO']));
+		$this->set('sub_system', Sanitize::stripAll($this->Session->read('menu_subsys')['WEX']));
 		//機能名
-		$this->set('kino', Sanitize::stripAll($this->Session->read('menu_kino')['WPO']['040']['kino_nm']));
+		$this->set('kino', Sanitize::stripAll($this->Session->read('menu_kino')['WEX']['120']['kino_nm']));
 
 		//メッセージマスタモデル
 		$this->MMessage = new MMessage($this->Session->read('select_ninusi_cd'),$this->Session->read('select_sosiki_cd'),$this->name);
@@ -47,13 +47,11 @@ class WPO040Controller extends AppController {
 		//分類マスタモデル
 		$this->MBunrui = new MBunrui($this->Session->read('select_ninusi_cd'),$this->Session->read('select_sosiki_cd'),$this->name);
 
-		//WPO040モデル
-		$this->WPO040Model = new WPO040Model($this->Session->read('select_ninusi_cd'),$this->Session->read('select_sosiki_cd'),$this->name);
+		//WEX120モデル
+		$this->WEX120Model = new WEX120Model($this->Session->read('select_ninusi_cd'),$this->Session->read('select_sosiki_cd'),$this->name);
 
-		$this->MMeisyo = new MMeisyo($this->Session->read('select_ninusi_cd'),
-				                     $this->Session->read('select_sosiki_cd'),
-				                     $this->name
-				                     );
+		//名称マスタモデル
+		$this->MMeisyo = new MMeisyo($this->Session->read('select_ninusi_cd'),$this->Session->read('select_sosiki_cd'),$this->name);
 
 	}
 
@@ -73,15 +71,18 @@ class WPO040Controller extends AppController {
 
 		//Javascript設定
 		$this->set("onload","initReload();".
-				"initPopUp('".Router::url('/WPO040/popup_update', false)."');" .
-				"initAddRow('".Router::url('/WPO040/popup_insert', false)."');" .
-				"initUpdate('".Router::url('/WPO040/dataUpdate', false)."');" .
+				"initPopUp('".Router::url('/WEX120/popup_update', false)."');" .
+				"initAddRow('".Router::url('/WEX120/popup_insert', false)."');" .
+				"initUpdate('".Router::url('/WEX120/dataUpdate', false)."');" .
 				"initBunrui();");
 
 		//検索条件、ページID取得
-		$ymd_syugyo = '';
+		$ymd_hassei = '';
 		$kotei = '';
-		$staff_nm = '';
+		$hassei_staff_nm = '';
+		$taiou_staff_nm = '';
+		$kbn_hinsitu_kanri = '';
+		$kbn_hinsitu_naiyo = '';
 		$error_flg = '';
 		$pageID = 1;
 		$return_cd = '';
@@ -89,59 +90,78 @@ class WPO040Controller extends AppController {
 		$message = '';
 
 		//検索条件
-		if (isset($this->request->query['ymd_syugyo'])){
-			$ymd_syugyo = $this->request->query['ymd_syugyo'];
+		if (isset($this->request->query['ymd_hassei'])){
+			$ymd_syugyo = $this->request->query['ymd_hassei'];
+		}
+		if (isset($this->request->query['kotei'])){
 			$kotei = $this->request->query['kotei'];
-			$staff_nm = $this->request->query['staff_nm'];
+		}
+		if (isset($this->request->query['hassei_staff_nm'])){
+			$hassei_staff_nm = $this->request->query['hassei_staff_nm'];
+		}
+		if (isset($this->request->query['taiou_staff_nm'])){
+			$taiou_staff_nm = $this->request->query['taiou_staff_nm'];
+		}
+		if (isset($this->request->query['kbn_hinsitu_kanri'])){
+			$kbn_hinsitu_kanri = $this->request->query['kbn_hinsitu_kanri'];
+		}
+		if (isset($this->request->query['kbn_hinsitu_naiyo'])){
+			$kbn_hinsitu_naiyo = $this->request->query['kbn_hinsitu_naiyo'];
+		}
+
+		//エラーフラグ
+		if (isset($this->request->query['error_flg'])){
 			$error_flg = $this->request->query['error_flg'];
 		}
 
 		//ページID
 		if(isset($this->request->query['pageID'])) {
-
 			$pageID = $this->request->query['pageID'];
 		}
 
 		//リターンCD
 		if(isset($this->request->query['return_cd'])) {
-
 			$return_cd = $this->request->query['return_cd'];
 		}
 
 		//メッセージ
 		if(isset($this->request->query['message'])) {
-
 			$message = $this->MCommon->escapePHP($this->request->query['message']);
 		}
 
 		//メッセージディスプレイフラグ
 		if(isset($this->request->query['display'])) {
-
 			$display = $this->request->query['display'];
 		}
 
 		//メッセージとリターンコードを出すか判断
 		if (isset($this->request->query['display']) && $display == "true") {
 
-			$this->Session->write('displayWPO040','true');
+			$this->Session->write('displayWEX120','true');
 
 			if ($return_cd != "") {
 
-				$this->redirect('/WPO040/index?return_cd=' . $return_cd .
+				$this->redirect('/WEX120/index?return_cd=' . $return_cd .
 											  '&message=' . $message .
-											  '&ymd_syugyo=' . $ymd_syugyo .
+											  '&ymd_hassei=' . $ymd_hassei .
 											  '&kotei=' . $kotei .
-											  '&staff_nm=' . $staff_nm .
+											  '&hassei_staff_nm=' . $hassei_staff_nm .
+											  '&taiou_staff_nm=' . $taiou_staff_nm .
+											  '&kbn_hinsitu_kanri=' . $kbn_hinsitu_kanri .
+											  '&kbn_hinsitu_naiyo=' . $kbn_hinsitu_naiyo .
 											  '&error_flg=' . $error_flg .
 											  '&pageID=' . $pageID .
-											  '&display=false'
+											  '&display=true'
 											  );
 
 			} else {
 
-				$this->redirect('/WPO040/index?&ymd_syugyo=' . $ymd_syugyo .
+				$this->redirect('/WEX120/index?ymd_hassei=' . $ymd_hassei .
 											  '&kotei=' . $kotei .
-											  '&staff_nm=' . $staff_nm .
+											  '&hassei_staff_nm=' . $hassei_staff_nm .
+										      '&taiou_staff_nm=' . $taiou_staff_nm .
+											  '&kbn_hinsitu_kanri=' . $kbn_hinsitu_kanri .
+											  '&kbn_hinsitu_naiyo=' . $kbn_hinsitu_naiyo .
 											  '&error_flg=' . $error_flg .
 											  '&pageID=' . $pageID .
 											  '&display=false'
@@ -150,25 +170,28 @@ class WPO040Controller extends AppController {
 			}
 
 			return;
-		} else if ($this->Session->check('displayWPO040') && $display == "false") {
+		} else if ($this->Session->check('displayWEX120') && $display == "false") {
 
-			$this->Session->delete('displayWPO040');
+			$this->Session->delete('displayWEX120');
 
-		} else if (!$this->Session->check('displayWPO040') && $display == "false") {
+		} else if (!$this->Session->check('displayWEX120') && $display == "false") {
 
 			//検索必須条件
 			if ($ymd_syugyo == "") {
 
-				$this->redirect('/WPO040/index');
+				$this->redirect('/WEX120/index');
 
 			} else {
 
-				$this->redirect('/WPO040/index?ymd_syugyo=' . $ymd_syugyo .
-											  '&kotei=' . $kotei .
-											  '&staff_nm=' . $staff_nm .
-											  '&error_flg=' . $error_flg .
-											  '&pageID=' . $pageID
-											  );
+				$this->redirect('/WEX120/index?ymd_hassei=' . $ymd_hassei .
+										  	 '&kotei=' . $kotei .
+											 '&hassei_staff_nm=' . $hassei_staff_nm .
+											 '&taiou_staff_nm=' . $taiou_staff_nm .
+											 '&kbn_hinsitu_kanri=' . $kbn_hinsitu_kanri .
+											 '&kbn_hinsitu_naiyo=' . $kbn_hinsitu_naiyo .
+											 '&error_flg=' . $error_flg .
+											 '&pageID=' . $pageID
+									         );
 
 			}
 
@@ -177,7 +200,6 @@ class WPO040Controller extends AppController {
 		}
 
 		//分類コンボ設定
-
 		//大に分ける
 		$opsions = $this->MBunrui->getBunruiDaiPDO(1);
 		$this->set("koteiDaiList",$opsions);
@@ -190,23 +212,35 @@ class WPO040Controller extends AppController {
 		$opsions = $this->MBunrui->getBunruiSaiPDO(1);
 		$this->set("koteiSaiList",$opsions);
 
+		//名称マスタコンボ設定
+		//品質管理区分
+		$kbn_hinsitu_kanri = $this->MMeisyo->getMeisyo('44');
+		$this->set('kbn_hinsitu_kanri', $kbn_hinsitu_kanri);
+
+		//品質内容区分
+		$kbn_hinsitu_naiyo = $this->MMeisyo->getMeisyo('45');
+		$this->set('kbn_hinsitu_naiyo', $kbn_hinsitu_naiyo);
+
 		//検索条件の必須チェック
-		if (!$this->Session->check('displayWPO0402') && isset($this->request->query['ymd_syugyo']) &&
-		     $ymd_syugyo == '' && !isset($this->request->query['return_cd']) ) {
+		if (!$this->Session->check('displayWEX1202') && isset($this->request->query['ymd_hassei']) &&
+		     $ymd_hassei == '' && !isset($this->request->query['return_cd']) ) {
 
 
 			//就業日付がないエラー
 			$errorArray = array();
-			$message = str_replace ("+","%2B",base64_encode ($this->MMessage->getOneMessage('WPOE040001')));
+			$message = str_replace ("+","%2B",base64_encode ($this->MMessage->getOneMessage('WEXE120001')));
 
 
-			$this->Session->write('displayWPO0402','true');
+			$this->Session->write('displayWEX1202','true');
 
-			$this->redirect('/WPO040/index?return_cd=1' .
+			$this->redirect('/WEX120/index?return_cd=1' .
 										  '&message=' . $message .
-										  '&ymd_syugyo=' . $ymd_syugyo .
+										  '&ymd_hassei=' . $ymd_hassei .
 										  '&kotei=' . $kotei .
-										  '&staff_nm=' . $staff_nm .
+										  '&hassei_staff_nm=' . $hassei_staff_nm .
+										  '&taiou_staff_nm=' . $taiou_staff_nm .
+										  '&kbn_hinsitu_kanri=' . $kbn_hinsitu_kanri .
+										  '&kbn_hinsitu_naiyo=' . $kbn_hinsitu_naiyo .
 										  '&error_flg=' . $error_flg .
 										  '&pageID=' . $pageID .
 										  '&display=true'
@@ -216,23 +250,23 @@ class WPO040Controller extends AppController {
 
 		} else {
 
-			$this->Session->delete('displayWPO0402');
+			$this->Session->delete('displayWEX1202');
 		}
 
 
 		//検索条件がある場合検索
-		if ($ymd_syugyo != '' || $kotei != '' || $staff_nm != '') {
+		if ($ymd_hassei != '' || $kotei != '' || $hassei_staff_nm != '' || $taiou_staff_nm != '' || $kbn_hinsitu_kanri != '' || $kbn_hinsitu_naiyo != '') {
 
 			//必須条件がない場合
-			if($ymd_syugyo == '' ) {
+			if($ymd_hassei == '' ) {
 
 				//タイムスタムプ取得
-				$this->set("timestamp", $this->WPO040Model->getTimestamp());
+				$this->set("timestamp", $this->WEX120Model->getTimestamp());
 
 				return;
 			}
 
-			$lsts = $this->WPO040Model->getKoteiData($ymd_syugyo,$kotei ,$staff_nm, $error_flg);
+			$lsts = $this->WEX120Model->getHinsitsuData($ymd_syugyo,$kotei ,$staff_nm, $error_flg);
 
 			//ページャーの設定
 			$pageNum = 50;
@@ -242,9 +276,8 @@ class WPO040Controller extends AppController {
 					"delta" => 10,
 					"perPage" => $pageNum,
 					"httpMethod" => "GET",
-					"path" => "/DCMS/WPO040/index"
+					"path" => "/DCMS/WEX120/index"
 			);
-
 			$pager = @Pager::factory($options);
 
 			//ページナビゲーションを設定
@@ -258,7 +291,6 @@ class WPO040Controller extends AppController {
 			$limit = $index + $pageNum;
 
 			if ($limit > count($lsts)) {
-
 				$limit = count($lsts);
 			}
 
@@ -268,10 +300,10 @@ class WPO040Controller extends AppController {
 			}
 
 			//前回の処理でエラーが発生した場合、前回のデータをそのまま表示
-			if ($this->Session->check('saveTableWPO040')) {
+			if ($this->Session->check('saveTableWEX120')) {
 
 				//前回のデータを取得
-				$getArray = $this->Session->read('saveTableWPO040');
+				$getArray = $this->Session->read('saveTableWEX120');
 
 				//前回のデータを設置
 				$data = $getArray->data;
@@ -284,13 +316,13 @@ class WPO040Controller extends AppController {
 				$this->render("index_error");
 
 				//前回のデータを削除
-				$this->Session->delete('saveTableWPO040');
+				$this->Session->delete('saveTableWEX120');
 
 			//エラーが発生していない場合は、検索条件を元に表示
 			} else {
 
 				//タイムスタムプ取得
-				$this->set("timestamp", $this->WPO040Model->getTimestamp());
+				$this->set("timestamp", $this->WEX120Model->getTimestamp());
 				$this->set('lsts',$arrayList);
 			}
 
@@ -301,10 +333,10 @@ class WPO040Controller extends AppController {
 		} else {
 
 			//前回の処理でエラーが発生した場合、前回のデータをそのまま表示
-			if ($this->Session->check('saveTableWPO040')) {
+			if ($this->Session->check('saveTableWEX120')) {
 
 				//前回のデータを取得
-				$getArray = $this->Session->read('saveTableWPO040');
+				$getArray = $this->Session->read('saveTableWEX120');
 
 				//前回のデータを設置
 				$data = $getArray->data;
@@ -317,13 +349,13 @@ class WPO040Controller extends AppController {
 				$this->render("index_error");
 
 				//前回のデータを削除
-				$this->Session->delete('saveTableWPO040');
+				$this->Session->delete('saveTableWEX120');
 
 			//エラーが発生していない場合は、検索条件を元に表示
 			} else {
 
 				//タイムスタムプ取得
-				$this->set("timestamp", $this->WPO040Model->getTimestamp());
+				$this->set("timestamp", $this->WEX120Model->getTimestamp());
 			}
 
 		}
@@ -343,10 +375,8 @@ class WPO040Controller extends AppController {
 		$this->autoLayout =false;
 		$this->autoRender = false;
 
-
 		//ポストデータの存在確認エラー
 		if(!$this->request->is('post')) {
-
 			echo "return_cd=" . "1" . "&message=" .  base64_encode ($this->MMessage->getOneMessage('CMNE000104'));
 			return;
 		}
@@ -356,50 +386,30 @@ class WPO040Controller extends AppController {
 
 		//データが空の場合、エラー
 		if(count($getArray) == 0) {
-
 			echo "return_cd=" . "1" . "&message=" .  base64_encode ($this->MMessage->getOneMessage('CMNE000101'));
 			return;
 		}
 
 		//全データを一時保存
-		$this->Session->write('saveTableWPO040',$getArray);
+		$this->Session->write('saveTableWEX120',$getArray);
 
 		//データを取り出す
 		$data = $getArray->data;
 		$timestamp = $getArray->timestamp;
 
-		//画面取得時のタイムスタンプが最新か確認
-//		if (!$this->WPO040Model->checkTimestamp($timestamp)) {
-//
-//			//エラー吐き出し
-//			$array = $this->WPO040Model->errors;
-//		    $message = '';
-//
-//		    foreach ( $array as $key=>$val ) {
-//
-//		    	foreach ($val as $key2=>$val2) {
-//
-//			    	$message = $message . $val2 . "<br>";
-//		    	}
-//		    }
-//
-//		    echo "return_cd=" . "1" . "&message=" .  base64_encode ($message);
-//		    return;
-//		}
-
 		//入力チェック
-		if (!$this->WPO040Model->checkKoteiData($data)) {
+		if (!$this->WEX120Model->checkHinsitsuData($data)) {
 
 			//エラー吐き出し
-			$array = $this->WPO040Model->errors;
+			$array = $this->WEX120Model->errors;
 		    $message = '';
 
 		    foreach ( $array as $key=>$val ) {
 
 		    	foreach ($val as $key2=>$val2) {
-
 			    	$message = $message . $val2 . "<br>";
 		    	}
+
 		    }
 
 		    echo "return_cd=" . "1" . "&message=" .  base64_encode ($message);
@@ -407,18 +417,18 @@ class WPO040Controller extends AppController {
 		}
 
 		//更新処理
-		if (!$this->WPO040Model->setKoteiData($data,$this->Session->read('staff_cd'))) {
+		if (!$this->WEX120Model->setHinsitsuData($data,$this->Session->read('staff_cd'))) {
 
 		    //エラー吐き出し
-		    $array = $this->WPO040Model->errors;
+		    $array = $this->WEX120Model->errors;
 		    $message = '';
 
 		    foreach ( $array as $key=>$val ) {
 
 		    	foreach ($val as $key2=>$val2) {
-
 			    	$message = $message . $val2 . "<br>";
 		    	}
+
 		    }
 
 		    echo "return_cd=" . "1" . "&message=" .  base64_encode ($message) ;
@@ -426,7 +436,7 @@ class WPO040Controller extends AppController {
 		}
 
 		//成功時は前回のテーブルデータを消す。
-		$this->Session->delete('saveTableWPO040');
+		$this->Session->delete('saveTableWEX120');
 
 		//成功時メッセージ
 		echo "return_cd=" . "0" . "&message=" .  base64_encode ($this->MMessage->getOneMessage('CMNI000001'));
@@ -444,6 +454,7 @@ class WPO040Controller extends AppController {
 		//ポップアップデータだけ取得するため、レイアウトは無効にする
 		$this->autoLayout = false;
 
+		//分類マスタ設定
 		//大に分ける
 		$opsions = $this->MBunrui->getBunruiDaiPDO(1);
 		$this->set("koteiDaiList",$opsions);
@@ -456,13 +467,13 @@ class WPO040Controller extends AppController {
 		$opsions = $this->MBunrui->getBunruiSaiPDO(1);
 		$this->set("koteiSaiList",$opsions);
 
-		//車両
-		$arrayList = $this->MMeisyo->getMeisyoPDO("41");
-		$this->set("syaryoList",$arrayList);
+		//品質管理区分
+		$arrayList = $this->MMeisyo->getMeisyoPDO("45");
+		$this->set("hinshitukanriList",$arrayList);
 
-		//エリア
-		$arrayList = $this->MMeisyo->getMeisyoPDO("42");
-		$this->set("areaList",$arrayList);
+		//品質内容区分
+		$arrayList = $this->MMeisyo->getMeisyoPDO("46");
+		$this->set("hinsitunaiyoList",$arrayList);
 
 	}
 
@@ -478,6 +489,7 @@ class WPO040Controller extends AppController {
 		//ポップアップデータだけ取得するため、レイアウトは無効にする
 		$this->autoLayout = false;
 
+		//分類マスタ設定
 		//大に分ける
 		$opsions = $this->MBunrui->getBunruiDaiPDO(1);
 		$this->set("koteiDaiList",$opsions);
@@ -491,13 +503,13 @@ class WPO040Controller extends AppController {
 		$this->set("koteiSaiList",$opsions);
 
 
-		//車両
-		$arrayList = $this->MMeisyo->getMeisyoPDO("41");
-		$this->set("syaryoList",$arrayList);
+		//品質管理区分
+		$arrayList = $this->MMeisyo->getMeisyoPDO("45");
+		$this->set("hinshitukanriList",$arrayList);
 
-		//エリア
-		$arrayList = $this->MMeisyo->getMeisyoPDO("42");
-		$this->set("areaList",$arrayList);
+		//品質内容区分
+		$arrayList = $this->MMeisyo->getMeisyoPDO("46");
+		$this->set("hinsitunaiyoList",$arrayList);
 
 	}
 

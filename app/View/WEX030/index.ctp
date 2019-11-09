@@ -9,7 +9,7 @@
 
 <!-- 検索 -->
 <div class="box" style="width:1000px;">
-	<?php echo $this->Form->create('WEX030Model', array('url' => '/WEX030','type'=>'get', 'inputDefaults' => array('label' => false,'div' => false))) ?> 
+	<?php echo $this->Form->create('WEX030Model', array('url' => '/WEX030','type'=>'get', 'inputDefaults' => array('label' => false,'div' => false))) ?>
 		<table class="cndt" style="width:1000px">
 			<tbody>
 			<colgroup>
@@ -20,33 +20,33 @@
 			<tr>
 				<td>大分類コード</td>
 				<td class="colBnriCd" style="text-align:left;" colspan="2">
-						<?php echo $this->Form->input('bnri_dai_cd', 
-												array('maxlength' => '3', 
-													'label' => false, 
-													'error' => false, 
-													'style' => 'width:100px', 
+						<?php echo $this->Form->input('bnri_dai_cd',
+												array('maxlength' => '3',
+													'label' => false,
+													'error' => false,
+													'style' => 'width:100px',
 													'class' => 'han')) ?>
 				</td>
 			</tr>
 			<tr>
 				<td>大分類名称</td>
 				<td class="colBnriNm" style="text-align:left;" colspan="2">
-						<?php echo $this->Form->input('bnri_dai_nm', 
-												array('maxlength' => '20', 
-													'label' => false, 
-													'error' => false, 
-													'style' => 'width:300px', 
+						<?php echo $this->Form->input('bnri_dai_nm',
+												array('maxlength' => '20',
+													'label' => false,
+													'error' => false,
+													'style' => 'width:300px',
 													'class' => 'zen')) ?>
 				</td>
 			</tr>
 			<tr>
 				<td>大分類説明</td>
 				<td class="colBnriExp" style="text-align:left;">
-						<?php echo $this->Form->input('bnri_dai_exp', 
-												array('maxlength' => '40', 
-													'label' => false, 
-													'error' => false, 
-													'style' => 'width:450px', 
+						<?php echo $this->Form->input('bnri_dai_exp',
+												array('maxlength' => '40',
+													'label' => false,
+													'error' => false,
+													'style' => 'width:450px',
 													'class' => 'zen')) ?>
 				</td>
 				<td><input value="検索" type="submit";div="btnsubmit"></td>
@@ -54,7 +54,7 @@
 			</tbody>
 		</table>
 	<?php echo $this->Form->end() ?>
-</div> 
+</div>
 <!--/ 検索 -->
 
 <!--/ 区切り線 -->
@@ -88,7 +88,7 @@
 		<div class="tableCell cell_dat nm" style="width:300px;"><?php echo $array['BNRI_DAI_NM'] ?></div>
 		<div class="tableCell cell_dat nm" style="width:150px;"><?php echo $array['BNRI_DAI_RYAKU'] ?></div>
 		<div class="tableCell cell_dat nm" style="width:415px;"><?php echo $array['BNRI_DAI_EXP'] ?></div>
- 			<div class="tableCell cell_dat kbn" style="width:85px;"><?php echo empty($array['KBN_TANI']) ? "" : $kbnTanis[$array['KBN_TANI']]; ?></div>
+ 		<div class="tableCell cell_dat kbn" style="width:85px;"><?php echo empty($array['KBN_TANI']) ? "" : $kbnTanis[$array['KBN_TANI']]; ?></div>
 		<div class="tableCell cell_dat kbn" style="width:50px;"><?php echo $array['BNRI_DAI_CD_CNT'] ?></div>
 
 		<div class="hiddenData LINE_COUNT"><?php echo $count ?></div>
@@ -96,11 +96,10 @@
 		<div class="hiddenData KBN_TANI"><?php echo $array['KBN_TANI'] ?></div>
 	</div>
 <?php $count++; ?>
-<?php endforeach; ?>	
+<?php endforeach; ?>
 </div>
 <div id="timestamp" style="display:none;" ><?php  echo $timestamp; ?></div>
 <!--/ メインテーブル-->
 
 </div>
 <!--/ #wrapper-->
-            

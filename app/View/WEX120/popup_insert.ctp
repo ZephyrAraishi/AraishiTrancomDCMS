@@ -3,31 +3,46 @@
 
 		<div style="display:none;position:absolute;height:0px;top:0px;left:330px;"  id="bango" ></div>
 
-		<div style="display:block;position:absolute;height:30px;top:5px;left:250px;text-align:right;">スタッフ：</div>
-		<div style="display:block;position:absolute;height:30px;top:0px;left:330px;text-align:right;" ><input type="button" value="検索" onClick="clickStaffSearchPopUp()"  style="width: 80px;height:24px;"></div>
-		<div style="display:block;position:absolute;height:30px;top:5px;left:430px;"  id="staff_cd" ></div>
-		<div style="display:block;position:absolute;height:30px;top:5px;left:520px;"  id="staff_nm"></div>
-
-		<div style="display:block;position:absolute;height:90px;top:40px;left:250px;">就業日時：</div>
- 		<div style="display:block;position:absolute;height:90px;top:40px;left:330px;" id="ymd_syugyo_area">
+		<div style="display:block;position:absolute;height:90px;top:5px;left:250px;">発生日付：</div>
+ 		<div style="display:block;position:absolute;height:90px;top:0px;left:330px;" id="ymd_syugyo_area">
 
  		</div>
-		<div style="display:block;position:absolute;height:90px;top:40px;left:430px;" >
-			<input type="text" id="dt_syugyo_st" style="width:40px;" class="han" maxlength="4">
-		</div>
-		<div style="display:block;position:absolute;height:30px;top:40px;left:480px;">～</div>
-		<div style="display:block;position:absolute;height:30px;top:40px;left:500px;">
-			<input type="text" id="dt_syugyo_ed" style="width:40px;" class="han" maxlength="4">
-		</div>
-	</div>
-	<div class="line" style="border-bottom:1px dashed #777777;" ></div>
-	<div style="width:800px;height:400px;overflow: scroll;margin-left:auto;margin-right:auto;margin-top:10px;margin-bottom:10px;padding:0px;" id="popupKoteiArea">
-<?php
-	for ($i =0; $i < 40 ;$i++) {
-?>
-		<div style="display:block;position:relative;width:1670px;height:35px;margin-right:10px;margin-bottom:15px;" class="koteiPopup" >
-			<div style="display:block;position:relative;width:100px;height:25px;float:left">工程名<?php echo mb_convert_kana($i + 1); ?></div>
-			<!-- 工程コンボ -->
+
+		<div style="display:block;position:absolute;height:90px;top:130px;left:250px;">品質管理区分：</div>
+    	<div style="display:block;position:absolute;height:90px;top:130px;left:3300px;">
+            	    		<select style="width:120px;" class="area_cd">
+            				<option value="" ></option>
+            <?php
+
+            			foreach ($hinsitukanriList as $hinsitukanri) {
+
+            				$hinsitukanriCd = (string)$hinsitukanri['MEI_CD'];
+            				$hinsitukanriNm = (string)$hinsitukanri['MEI_1'];
+            				echo '<option value="' . $hinsitukanriCd . '">' . $hinsitukanriNm . '</option>';
+            			}
+            ?>
+            			</select>
+        </div>
+
+		<div style="display:block;position:absolute;height:90px;top:130px;left:250px;">品質内容区分：</div>
+    	<div style="display:block;position:absolute;height:90px;top:130px;left:500px;">
+            	    		<select style="width:120px;" class="area_cd">
+            				<option value="" ></option>
+            <?php
+
+            			foreach ($hinsitunaiyoList as $hinsitunaiyo) {
+
+            				$hinsitunaiyoCd = (string)$hinsitunaiyo['MEI_CD'];
+            				$hinsitunaiyoNm = (string)$hinsitunaiyo['MEI_1'];
+            				echo '<option value="' . $hinsitunaiyoCd . '">' . $hinsitunaiyoNm . '</option>';
+            			}
+            ?>
+            			</select>
+        </div>
+
+		<!-- 工程コンボ -->
+		<div style="display:block;position:absolute;height:90px;top:130px;left:250px;">工程名：</div>
+    	<div style="display:block;position:absolute;height:90px;top:130px;left:500px;">
 	    	<div class="kotei_dropdown_menu_div"
 	    		style="display:block;position:relative;width:25px;float:left;text-align:left;">
 	    		<div id="menu_img_<?php echo $i; ?>" class="img_top">
@@ -159,60 +174,21 @@
 				</div>
 			</div>
 			<!-- /工程コンボ -->
-    		<div style="display:block;position:relative;float:left;width:60px;">
-    			<input type="text" size="5" maxlength="4" class= "dt_kotei_st han" >
-    		</div>
-	    	<div style="display:block;position:relative;float:left;width:30px;">～</div>
-	    	<div style="display:block;position:relative;float:left;width:60px;">
-	    		<input type="text" size="5" maxlength="4" class= "dt_kotei_ed han" >
-	    	</div>
-	    	<div style="display:block;position:relative;float:left;width:90px;margin-left:10px;">
-            	    		<input type="text" size="10" maxlength="50" class= "kaisi_kyori" >
-            	    	</div>
-            	    	<div style="display:block;position:relative;float:left;width:90px;margin-left:10px;">
-            	    		<input type="text" size="10" maxlength="50" class= "syuryo_kyori" >
-            	    	</div>
-            	    	<div style="display:block;position:relative;float:left;width:120px;margin-left:10px;">
-            	    		<select style="width:120px;" class="syaryo_cd">
-            				<option value="" ></option>
-            <?php
+        </div>
 
-            			foreach ($syaryoList as $syaryo) {
+		<div style="display:block;position:absolute;height:30px;top:5px;left:250px;text-align:right;">発生スタッフ：</div>
+		<div style="display:block;position:absolute;height:30px;top:0px;left:330px;text-align:right;" ><input type="button" value="検索" onClick="clickStaffSearchPopUp()"  style="width: 80px;height:24px;"></div>
+		<div style="display:block;position:absolute;height:30px;top:5px;left:430px;"  id="staff_cd" ></div>
+		<div style="display:block;position:absolute;height:30px;top:5px;left:520px;"  id="staff_nm"></div>
 
-            				$syaryoCd = (string)$syaryo['MEI_CD'];
-            				$syaryoNm = (string)$syaryo['MEI_1'];
-            				echo '<option value="' . $syaryoCd . '">' . $syaryoNm . '</option>';
-            			}
-            ?>
-            			</select>
-            	    	</div>
-            	    	<div style="display:block;position:relative;float:left;width:120px;margin-left:10px;">
-            	    		<select style="width:120px;" class="area_cd">
-            				<option value="" ></option>
-            <?php
+		<div style="display:block;position:absolute;height:30px;top:5px;left:250px;text-align:right;">対応スタッフ：</div>
+		<div style="display:block;position:absolute;height:30px;top:0px;left:330px;text-align:right;" ><input type="button" value="検索" onClick="clickStaffSearchPopUp()"  style="width: 80px;height:24px;"></div>
+		<div style="display:block;position:absolute;height:30px;top:5px;left:430px;"  id="staff_cd" ></div>
+		<div style="display:block;position:absolute;height:30px;top:5px;left:520px;"  id="staff_nm"></div>
 
-            			foreach ($areaList as $area) {
-
-            				$areaCd = (string)$area['MEI_CD'];
-            				$areaNm = (string)$area['MEI_1'];
-            				echo '<option value="' . $areaCd . '">' . $areaNm . '</option>';
-            			}
-            ?>
-            			</select>
-            </div>
-	    	<div style="display:block;position:relative;float:left;width:220px;margin-left:20px;">
-	    		<input type="text" size="30" maxlength="50" class= "biko1" >
-	    	</div>
-	    	<div style="display:block;position:relative;float:left;width:220px;margin-left:10px;">
-	    		<input type="text" size="30" maxlength="50" class= "biko2" >
-	    	</div>
-	    	<div style="display:block;position:relative;float:left;width:220px;margin-left:10px;">
-	    		<input type="text" size="30" maxlength="50" class= "biko3" >
-	    	</div>
-
+		<div style="display:block;position:absolute;height:30px;top:5px;left:250px;text-align:right;">対応金額：</div>
+		<div style="display:block;position:absolute;height:90px;top:40px;left:430px;" >
+			<input type="text" id="dt_syugyo_st" style="width:40px;" class="han" maxlength="4">
 		</div>
-<?php
-	}
-?>
 	</div>
 </div>

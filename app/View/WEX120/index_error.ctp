@@ -1,13 +1,13 @@
 <?php
 			echo $this->Html->script(array('effects','window','protocalendar','base64',
-					'DCMSMessage','DCMSCommon','DCMSValidation','DCMSWPO040_RELOAD','DCMSWPO040_POPUP',
-					'DCMSWPO040_ADDROW','DCMSWPO040_CALENDAR','staffsearch','DCMSWPO040_UPDATE','DCMSKOTEI_DROPDOWN_MENU'), array('inline'=>false));
-            echo $this->Html->css(array('themes/default','kotei_dropdown_menu','themes/alert','themes/alphacube','calendar','DCMSWPO'), false, array('inline'=>false));
+					'DCMSMessage','DCMSCommon','DCMSValidation','DCMSWEX120_RELOAD','DCMSWEX120_POPUP',
+					'DCMSWEX120_ADDROW','DCMSWEX120_CALENDAR','staffsearch','DCMSWEX120_UPDATE','DCMSKOTEI_DROPDOWN_MENU'), array('inline'=>false));
+            echo $this->Html->css(array('themes/default','kotei_dropdown_menu','themes/alert','themes/alphacube','calendar','DCMSWEX'), false, array('inline'=>false));
 
 ?>
             <div id="wrapper_l">				<!-- 検索 -->
 				<div class="box" style="width:1000px;">
-<?php 				echo $this->Form->create('WPO040Model', array('url' => '/WPO040/index',
+<?php 				echo $this->Form->create('WEX120Model', array('url' => '/WEX120/index',
 															      'type' => 'get',
 				     											  'inputDefaults' => array('label' => false,
 				     											  							'div' => false,
@@ -160,23 +160,45 @@
 		            			</div>
 		            			<!-- /工程コンボ -->
 		            		</td>
-					    	<td >スタッフ</td>
+					    	<td >発生スタッフ</td>
 					    	<td >
-					    		<input name="staff_nm" id="staff_nmText" maxlength="30" type="text" class="zen"  style="width:140px;height:20px">
+					    		<input name="hassei_staff_nm" id="hassei_staff_nmText" maxlength="30" type="text" class="zen"  style="width:140px;height:20px">
 					    	</td>
 					    	<td style="text-align:right;">
 					    		<input value="検索" type="submit">
 					    	</td>
 				    	</tr>
                         <tr>
-                            <td >就業終了エラー</td>
-                            <td>
-                                <select name="error_flg" id="error_flg">
-                                    <option value="0"></option>
-                                    <option value="1">就業日付のエラー</option>
-                                    <option value="2">就業日付より過去のエラー</option>
-                                </select>
-                            </td>
+					    	<td >対応スタッフ</td>
+					    	<td >
+					    		<input name="taiou_staff_nm" id="taiou_staff_nmText" maxlength="30" type="text" class="zen"  style="width:140px;height:20px">
+					    	</td>
+							<td>品質管理区分</td>
+							<td class="colkanriCd" style="text-align:left;">
+								<select name="kbn_hinsitu_kanri"  id="kbnhinsitukanriCombo" style="width:120px">
+									<option value=""></option>
+									<?php
+									foreach($kbnhinsitukanri as $key => $value) :
+									?>
+										<option value="<?php echo $key ?>"><?php echo $value?></option>
+									<?php
+									endforeach;
+									?>
+								</select>
+							</td>
+							<td>品質内容区分</td>
+							<td class="colnaiyoCd" style="text-align:left;">
+								<select name="kbn_hinsitu_naiyo"  id="kbnhinsitunaiyoCombo" style="width:120px">
+									<option value=""></option>
+									<?php
+									foreach($kbnTanis as $key => $value) :
+									?>
+										<option value="<?php echo $key ?>"><?php echo $value?></option>
+									<?php
+									endforeach;
+									?>
+								</select>
+							</td>
                         </tr>
 				    </table>
 					<?php echo $this->Form->end() ?>
@@ -198,78 +220,61 @@
 				<!-- メインテーブル-->
 				<div class="pagaerNavi" style="text-align:left;" ><?php if (!empty($navi)) print($navi);?></div>
 				<div class="resizable_s" style="height:650px;" id="lstTable" >
-					<div class="tableRowTitle row_ttl_sp_2" style="width:5380px">
+					<div class="tableRowTitle row_ttl_sp_2" style="width:1880px">
 						<div class="tableCell cell_ttl_sp_2" style="width:60px;" ><?php echo Configure::read("Bango") ?></div>
-						<div class="tableCell cell_ttl_sp_2" style="width:120px;" >スタッフコード</div>
-						<div class="tableCell cell_ttl_sp_2" style="width:100px;" >スタッフ名</div>
-						<div class="tableCell cell_ttl_sp_2" style="width:100px;" >日付</div>
-						<div class="tableCell cell_ttl_sp_2" style="width:70px;" >就業開始</div>
-						<div class="tableCell cell_ttl_sp_2" style="width:70px;" >就業終了</div>
-<?php
-						for ($i=1;$i<=40;$i++) {
-?>
-						<div style="float:left;width:120px;height:70px;">
-							<div class="tableCell cell_ttl_1" style="width:110px;">工程名<?php echo mb_convert_kana($i, "A", "UTF-8") ?></div>
-							<div class="tableCell cell_ttl_1" style="width:50px;">開始</div>
-							<div class="tableCell cell_ttl_1" style="width:50px;">終了</div>
-						</div>
-<?php
-						}
-?>
+						<div class="tableCell cell_ttl_sp_2" style="width:120px;" >発生日付</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:100px;" >発生番号</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:150px;" >品質管理区分</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:150px;" >品質内容区分</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:200px;" >大分類</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:200px;" >中分類</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:200px;" >細分類</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:150px;" >発生スタッフ</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:300px;" >品質内容</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:150px;" >対応スタッフ</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:300px;" >対応方法</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:100px;" >対応時間</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:100px;" >対応金額</div>
 					</div>
 <?php
 				if (!empty($lsts)) {
 
-					foreach($lsts as $obj) {
+					$index += 1;
 
-						$cellsArray = $obj->cells;
-						$dataArray = $obj->data;
-						$koteisArray = $obj->koteis;
-
+					foreach($lsts as $array) {
 ?>
 					<div class="tableRow row_dat_sp_2" style="width:5380px;">
-						<div class="tableCell cell_dat_sp_2 bango" style="width:60px;" ><?php echo $cellsArray[0] ?></div>
-						<div class="tableCell cell_dat_sp_2 kbn" style="width:120px;" ><?php echo $cellsArray[1] ?></div>
-						<div class="tableCell cell_dat_sp_2 nm" style="width:100px;" ><?php echo $cellsArray[2] ?></div>
-						<div class="tableCell cell_dat_sp_2 date" style="width:100px;" ><?php echo $cellsArray[3] ?></div>
-						<div class="tableCell cell_dat_sp_2 date" style="width:70px;" ><?php echo $cellsArray[4] ?></div>
-						<div class="tableCell cell_dat_sp_2 date" style="width:70px;" ><?php echo $cellsArray[5] ?></div>
-						<div class="hiddenData"><?php echo $dataArray[0] ?></div>
-						<div class="hiddenData"><?php echo $dataArray[1] ?></div>
-						<div class="hiddenData"><?php echo $dataArray[2] ?></div>
-						<div class="hiddenData"><?php echo $dataArray[3] ?></div>
-						<div class="hiddenData"><?php echo $dataArray[4] ?></div>
-<?php
-						foreach($koteisArray as $obj2) {
-
-							$cellsKoteiArray = $obj2->cells;
-							$dataKoteiArray = $obj2->data;
-?>
-						<div class="tableCellGroupKotei" style="float:left;width:120px;height:60px;">
-							<div class="tableCellKotei cell_dat nm" style="width:110px;"><?php echo $cellsKoteiArray[0] ?></div>
-							<div class="tableCellKotei cell_dat date" style="width:50px;"><?php echo $cellsKoteiArray[1] ?></div>
-							<div class="tableCellKotei cell_dat date" style="width:50px;"><?php echo $cellsKoteiArray[2] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[0] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[1] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[2] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[3] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[4] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[5] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[6] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[7] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[8] ?></div>
-							<div class="hiddenDataKotei"><?php echo $dataKoteiArray[9] ?></div>
-						</div>
-<?php
-						}
-?>
+						<div class="tableCell cell_dat_sp_2 bango" style="width:60px;" ><?php echo $index ?></div>
+						<div class="tableCell cell_dat_sp_2 date"  style="width:120px;" ><?php echo str_replace("-","/",$array[0]['YMD_HASSEI']) ?></div>
+						<div class="tableCell cell_dat_sp_2 cnt"   style="width:100px;" ><?php echo $array[0]['HASSEI_NO'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:150px;" ><?php echo $array[0]['HINSITU_KANRI_NM'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:150px;" ><?php echo $array[0]['HINSITU_NAIYO_NM'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:200px;" ><?php echo $array[0]['BNRI_DAI_NM'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:200px;" ><?php echo $array[0]['BNRI_CYU_NM'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:200px;" ><?php echo $array[0]['BNRI_SAI_NM'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:150px;" ><?php echo $array[0]['HASSEI_STAFF_NM'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:300px;" ><?php echo $array[0]['HINSITU_NAIYO'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:150px;" ><?php echo $array[0]['TAIOU_STAFF_NM'] ?></div>
+						<div class="tableCell cell_dat_sp_2 nm"    style="width:300px;" ><?php echo $array[0]['TAIOU_HOUHOU'] ?></div>
+						<div class="tableCell cell_dat_sp_2 kin"   style="width:100px;" ><?php echo $array[0]['TAIOU_JIKAN'] ?></div>
+						<div class="tableCell cell_dat_sp_2 cnt"   style="width:100px;" ><?php echo $array[0]['TAIOU_KINGAKU'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['HASSEI_NO'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['KBN_HINSITU_KANRI'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['KBN_HINSITU_NAIYO'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['BNRI_DAI_CD'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['BNRI_CYU_CD'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['BNRI_SAI_CD'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['HASSEI_STAFF_CD'] ?></div>
+						<div class="hiddenData"><?php echo $array[0]['TAIOU_STAFF_CD'] ?></div>
+						<div class="hiddenData">0</div>
 					</div>
 <?php
+						$index++;
 					}
 				}
 ?>
 				</div>
 
             </div>
-            <div id="timestamp" style="display:none;" ><?php echo $timestamp; ?></div>
+            <div id="timestamp" style="display:none;" ><?php  echo $timestamp; ?></div>
             <div style="display:none;" id="ymd_syugyo_storage"><input type="text" style="width:80px;" class="han" maxlength="8" id="ymd_syugyo" ></div>

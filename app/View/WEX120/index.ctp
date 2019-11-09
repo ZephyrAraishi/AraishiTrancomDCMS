@@ -266,7 +266,8 @@
 						<div class="hiddenData"><?php echo $array[0]['BNRI_SAI_CD'] ?></div>
 						<div class="hiddenData"><?php echo $array[0]['HASSEI_STAFF_CD'] ?></div>
 						<div class="hiddenData"><?php echo $array[0]['TAIOU_STAFF_CD'] ?></div>
-						<div class="hiddenData">0</div>
+						<div class="hiddenData LINE_COUNT"><?php echo $index ?></div>
+						<div class="hiddenData CHANGED">0</div>
 					</div>
 <?php
 						$index++;
@@ -277,4 +278,4 @@
 
             </div>
             <div id="timestamp" style="display:none;" ><?php  echo $timestamp; ?></div>
-            <div style="display:none;" id="ymd_syugyo_storage"><input type="text" style="width:80px;" class="han" maxlength="8" id="ymd_syugyo" ></div>
+            <div style="display:none;" id="ymd_syugyo_storage"><input type="text" style="width:80px;" class="han" maxlength="8" id="ymd_hassei" ></div>
