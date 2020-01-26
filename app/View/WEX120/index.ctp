@@ -224,7 +224,9 @@
 						<div class="tableCell cell_ttl_sp_2" style="width:60px;" ><?php echo Configure::read("Bango") ?></div>
 						<div class="tableCell cell_ttl_sp_2" style="width:120px;" >発生日付</div>
 						<div class="tableCell cell_ttl_sp_2" style="width:100px;" >発生番号</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:60px;" >品質管理コード</div>
 						<div class="tableCell cell_ttl_sp_2" style="width:150px;" >品質管理区分</div>
+						<div class="tableCell cell_ttl_sp_2" style="width:600px;" >品質内容コード</div>
 						<div class="tableCell cell_ttl_sp_2" style="width:150px;" >品質内容区分</div>
 						<div class="tableCell cell_ttl_sp_2" style="width:200px;" >大分類</div>
 						<div class="tableCell cell_ttl_sp_2" style="width:200px;" >中分類</div>
