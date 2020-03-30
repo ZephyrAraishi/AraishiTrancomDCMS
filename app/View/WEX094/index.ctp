@@ -4,7 +4,7 @@ echo $this->Html->script(array('effects','window','protocalendar','base64','DCMS
 echo $this->Html->css(array('themes/default','kotei_dropdown_menu','themes/alert','themes/alphacube','calendar','DCMSWEX'), false, array('inline'=>false));
 ?>
 <div id="wrapper_s">
-	
+
 <div id="kaizen_header">
 
 <?php echo $this->Form->create('WEX094Model', array('url' => '/WEX094','type'=>'get', 'inputDefaults' => array('label' => false,'div' => false))) ?>
@@ -89,9 +89,9 @@ echo $this->Html->css(array('themes/default','kotei_dropdown_menu','themes/alert
 	<tr>
 		<td>出力期間</td>
 		<td colspan="7">
-				<input id="startYmdInsText" name="startYmd" maxlength="8" type="text" style="width:80px;height:20px" value="<?php echo $startYmd ?>">
+				<input id="startYmdInsText" name="startYmd" maxlength="8" class="han" type="text" style="width:80px;height:20px" value="<?php echo $startYmd ?>">
 				&nbsp;～&nbsp;
-				<input id="endYmdInsText" name="endYmd" maxlength="8" type="text" style="width:80px;height:20px" value="<?php echo $endYmd ?>">
+				<input id="endYmdInsText" name="endYmd" maxlength="8" type="text" class="han" style="width:80px;height:20px" value="<?php echo $endYmd ?>">
 				&nbsp;
 				<input type="submit" value="出力">
 		</td>
@@ -131,8 +131,8 @@ echo $this->Html->css(array('themes/default','kotei_dropdown_menu','themes/alert
 	</div>
 <?php if (!empty($abcData)) { ?>
 	<?php for ($i = 0; $i < count($abcData); $i++) { ?>
-		<?php 
-			$no = (($pageID - 1) * $pageRowCnt) + ($i + 1); 
+		<?php
+			$no = (($pageID - 1) * $pageRowCnt) + ($i + 1);
 			$data = $abcData[$i];
 		?>
 	<div class="tableRow row_dat" style="width:2050px;">
@@ -165,7 +165,7 @@ echo $this->Html->css(array('themes/default','kotei_dropdown_menu','themes/alert
 <hr>
 
 <div id="glaph">
-	<?php 
+	<?php
 		$param  = "?no=".$kznNo;
 		$param .= "&startYmd=".$viewStartYmd;
 		$param .= "&endYmd=".$viewEndYmd;

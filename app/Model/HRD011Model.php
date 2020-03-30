@@ -44,7 +44,7 @@ class HRD011Model extends DCMSAppModel{
 	 */
 	public function getMStaffKyokaLst($staff_cd, $sub_system_id, $kino_id) {
 		/* ▼取得カラム設定 */
-		$fields = 'A.STAFF_CD,B.STAFF_NM,A.SUB_SYSTEM_ID,A.KINO_ID';
+		$fields = 'A.STAFF_CD,B.STAFF_NM,A.SUB_SYSTEM_ID,A.KINO_ID,C.KINO_NM';
 
 		/* ▼検索条件設定 */
 
@@ -72,14 +72,16 @@ class HRD011Model extends DCMSAppModel{
 		}
 		//機能ＩＤ
 		if ($kino_id != null){
-			$condition .= " AND A.KINO_ID LIKE :kino_id " ;
-			$conditionVal['kino_id'] = "%" . $kino_id . "%";
+			$condition .= " AND (A.KINO_ID LIKE :kino_id " ;
+			$condition .= " OR C.KINO_NM LIKE :kino_id )" ;
+				$conditionVal['kino_id'] = "%" . $kino_id . "%";
 		}
 
 		/* ▼スタッフ許可情報取得 */
 		$sql  = 'SELECT ';
 		$sql .= "$fields ";
 		$sql .= 'FROM M_STAFF_KYOKA A INNER JOIN M_STAFF_KIHON B ON A.NINUSI_CD=B.DAI_NINUSI_CD AND A.SOSIKI_CD=B.DAI_SOSIKI_CD AND A.STAFF_CD=B.STAFF_CD ';
+		$sql .= ' INNER JOIN M_MENU C ON A.NINUSI_CD=C.NINUSI_CD AND A.SOSIKI_CD=C.SOSIKI_CD AND A.SUB_SYSTEM_ID=C.SUB_SYSTEM_ID AND A.KINO_ID=C.KINO_ID ';
 		$sql .= 'WHERE ';
 		$sql .= $condition;
 		$sql .= $conditionKey;

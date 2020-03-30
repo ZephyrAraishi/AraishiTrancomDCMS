@@ -40,7 +40,7 @@
 				</td>
 			</tr>
 			<tr>
-				<td>機能ＩＤ</td>
+				<td>機能名</td>
 				<td class="colKinoId" style="text-align:left;">
 						<?php echo $this->Form->input('kinoid',
 												array('maxlength' => '10',
@@ -76,7 +76,8 @@
 		<div class="tableCell cell_ttl_2_1" style="width:150px;" >スタッフコード</div>
 		<div class="tableCell cell_ttl_2_1" style="width:300px;" >スタッフ氏名</div>
 		<div class="tableCell cell_ttl_2_1" style="width:150px;" >サブシステム</div>
-		<div class="tableCell cell_ttl_2_1" style="width:415px;" >機能ＩＤ</div>
+		<div class="tableCell cell_ttl_2_1" style="width:215px;" >機能ＩＤ</div>
+		<div class="tableCell cell_ttl_2_1" style="width:215px;" >機能名</div>
 	</div>
 <?php $count = 0; ?>
 <?php foreach ($lsts as $array): ?>
@@ -85,7 +86,8 @@
 		<div class="tableCell cell_dat cd" style="width:150px;"><?php echo $array['STAFF_CD'] ?></div>
 		<div class="tableCell cell_dat nm" style="width:300px;"><?php echo $array['STAFF_NM'] ?></div>
 		<div class="tableCell cell_dat cd" style="width:150px;"><?php echo $array['SUB_SYSTEM_ID'] ?></div>
-		<div class="tableCell cell_dat cd" style="width:415px;"><?php echo $array['KINO_ID'] ?></div>
+		<div class="tableCell cell_dat cd" style="width:215px;"><?php echo $array['KINO_ID'] ?></div>
+		<div class="tableCell cell_dat cd" style="width:215px;"><?php echo $array['KINO_NM'] ?></div>
 
 		<div class="hiddenData LINE_COUNT"><?php echo $count ?></div>
 		<div class="hiddenData CHANGED">0</div>

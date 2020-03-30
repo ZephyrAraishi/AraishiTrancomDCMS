@@ -35,7 +35,7 @@
 													'name' => 'ymd_from',
 													'id' => 'ymd_from',
 													'value' => $ymd_from,
-													'class' => 'zen')) ?>
+													'class' => 'han')) ?>
 				<td style="display:table-cell;width:10px;padding-right:2px;padding-left:2px;text-align:center;font-size:13px;color:#222">～</td>
 				<td ~ class="colBnriCd" style="text-align:left;" colspan="1">
 						<?php echo $this->Form->input('ymd_to',
@@ -46,7 +46,7 @@
 													'name' => 'ymd_to',
 													'value' => $ymd_to,
 													'id' => 'ymd_to',
-													'class' => 'zen')) ?>
+													'class' => 'han')) ?>
 				</td>
 
 				<td>時間帯</td>

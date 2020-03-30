@@ -33,7 +33,7 @@
 													'name' => 'ymd',
 													'id' => 'ymd',
 													'value' => $ymd,
-													'class' => 'zen')) ?>
+													'class' => 'han')) ?>
 				<td>開始時間</td>
 				<td>
 					<select name='timeFrom' id='timeFrom'>
